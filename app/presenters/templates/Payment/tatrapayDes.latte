@@ -1,0 +1,23 @@
+{block content}
+
+<h1>TatraPay simulator (AES 256 version)</h1>
+
+<div>
+    <p>Input Sign: <code>{$inputSign}</code></p>
+    <p>Computed Sign: <code>{$computedSign}</code></p>
+    <p>
+        Params:
+    <pre>{php print_r($params)}</pre>
+    </p>
+</div>
+
+<div>
+    {if $inputSign == $computedSign}
+        <p class="text-success">Sign OK</p>
+        <a href="{$okReturnUrl}" class="btn btn-primary">continue ok</a>
+        <a href="{$failReturnUrl}" class="btn btn-danger">continue fail</a>
+        <a href="{$timeoutReturnUrl}" class="btn btn-danger">continue timeout</a>
+    {else}
+        <p class="text-danger">Wrong sign</p>
+    {/if}
+</div>
