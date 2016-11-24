@@ -46,15 +46,14 @@ class TatraPayHmacSign
         $sharedSecret = pack('H*', $this->sharedSecret);
 
         return hash_hmac('sha256', $base, $sharedSecret);
-
     }
 
     public function returnUrlSign($result)
     {
-        $base = "{$this->vs}{$result}";
+        $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->timestamp}";
 
         $sharedSecret = pack('H*', $this->sharedSecret);
 
-        return $this->rurl . '?VS={$this->vs}&RES={$result}&HMAC=' . hash_hmac('sha256', $base, $sharedSecret);
+        return $this->rurl . "?VS={$this->vs}&RES={$result}&TIMESTAMP={$this->timestamp}&HMAC=" . hash_hmac('sha256', $base, $sharedSecret);
     }
 }
