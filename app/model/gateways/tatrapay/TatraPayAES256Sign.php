@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Gateways\Tatrapay;
+namespace App\Gateways\TatraPay;
+
+use Omnipay\TatraPay\Sign\Aes256Sign;
 
 class TatraPayAES256Sign
 {
@@ -20,10 +22,6 @@ class TatraPayAES256Sign
 
     public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl)
     {
-        if (strlen($sharedSecret) == 64) {
-            $sharedSecret = pack('H*', $sharedSecret);
-        }
-
         $this->sharedSecret = $sharedSecret;
         $this->mid = $mid;
         $this->amt = $amt;
@@ -37,40 +35,16 @@ class TatraPayAES256Sign
     {
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}";
 
-        $bytesHash = sha1($base, TRUE);
-
-        // vezmeme prvych 16 bytov
-        $bytesHash = substr($bytesHash, 0, 16);
-
-        $aes = mcrypt_module_open (MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
-        $iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($aes), MCRYPT_RAND);
-        mcrypt_generic_init($aes, $this->sharedSecret, $iv);
-        $bytesSign = mcrypt_generic($aes, $bytesHash);
-        mcrypt_generic_deinit($aes);
-        mcrypt_module_close($aes);
-
-        $sign = strtoupper(bin2hex($bytesSign));
-
-        return $sign;
+        $aes256Sign = new Aes256Sign();
+        return $aes256Sign->sign($base, $this->sharedSecret);
     }
 
     public function returnUrlSign($result)
     {
         $base = "{$this->vs}{$result}";
 
-        $bytesHash = sha1($base, TRUE);
-
-        // vezmeme prvych 16 bytov
-        $bytesHash = substr($bytesHash, 0, 16);
-
-        $aes = mcrypt_module_open (MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
-        $iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($aes), MCRYPT_RAND);
-        mcrypt_generic_init($aes, $this->sharedSecret, $iv);
-        $bytesSign = mcrypt_generic($aes, $bytesHash);
-        mcrypt_generic_deinit($aes);
-        mcrypt_module_close($aes);
-
-        $sign = strtoupper(bin2hex($bytesSign));
+        $aes256Sign = new Aes256Sign();
+        $sign = $aes256Sign->sign($base, $this->sharedSecret);
 
         return $this->rurl . "?VS={$this->vs}&RES={$result}&SIGN={$sign}";
     }

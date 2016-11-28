@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Gateways\TatraPay;
+namespace App\Gateways\CardPay;
 
 use Omnipay\TatraPay\Sign\DesSign;
 
-class TatraPayDESSign
+class CardPayDESSign
 {
     private $sharedSecret;
 
@@ -20,7 +20,13 @@ class TatraPayDESSign
 
     private $rurl;
 
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl)
+    private $ipc;
+
+    private $name;
+
+    private $ac;
+
+    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $ipc = '', $name = '')
     {
         $this->sharedSecret = $sharedSecret;
         $this->mid = $mid;
@@ -29,24 +35,24 @@ class TatraPayDESSign
         $this->vs = $vs;
         $this->cs = $cs;
         $this->rurl = $rurl;
+        $this->ac = 111111;
     }
 
     public function sign()
     {
-        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}";
+        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}";
 
         $desSign = new DesSign();
-
         return $desSign->sign($base, $this->sharedSecret);
     }
 
     public function returnUrlSign($result)
     {
-        $base = "{$this->vs}{$result}";
+        $base = "{$this->vs}{$result}{$this->ac}";
 
         $desSign = new DesSign();
         $sign = $desSign->sign($base, $this->sharedSecret);
 
-        return $this->rurl . "?VS={$this->vs}&RES={$result}&SIGN={$sign}";
+        return $this->rurl . "?VS={$this->vs}&AC={$this->ac}&RES={$result}&SIGN={$sign}";
     }
 }
