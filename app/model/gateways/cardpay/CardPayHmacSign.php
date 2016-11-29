@@ -28,6 +28,8 @@ class CardPayHmacSign
 
     private $timestamp;
 
+    private $tid;
+
     public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $rem, $timestamp, $ipc = '', $name = '')
     {
         $this->sharedSecret = $sharedSecret;
@@ -42,11 +44,12 @@ class CardPayHmacSign
         $this->name = $name;
         $this->timestamp = $timestamp;
         $this->ac = 111111;
+        $this->tid = '';
     }
 
     public function sign()
     {
-    	$base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->timestamp}";
+    	$base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->timestamp}";
 
         $hmacSign = new HmacSign();
 
@@ -55,7 +58,7 @@ class CardPayHmacSign
 
     public function returnUrlSign($result)
     {
-        $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->ac}{$result}{$this->timestamp}";
+        $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->tid}{$this->timestamp}";
 
         $hmacSign = new HmacSign();
         $sign = $hmacSign->sign($base, $this->sharedSecret);

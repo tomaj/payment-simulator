@@ -6,7 +6,7 @@ use App\Gateways\TatraPay\TatraPayAES256Sign;
 use App\Gateways\TatraPay\TatraPayDESSign;
 use App\Gateways\TatraPay\TatraPayHmacSign;
 use App\Gateways\CardPay\CardPayAES256Sign;
-use App\Gateways\CardPay\CardPayDesSign;
+use App\Gateways\CardPay\CardPayDESSign;
 use App\Gateways\CardPay\CardPayHmacSign;
 use Nette\Application\UI\Presenter;
 
@@ -111,7 +111,7 @@ class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new CardPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $tatrapaySign = new CardPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -132,9 +132,9 @@ class PaymentPresenter extends Presenter
         $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
         $mid = $this->params['MID'];
 
-        $inputSign = $this->params['SIGN'];
+        $inputSign = $this->params['HMAC'];
 
-        $tatrapaySign = new CardPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $tatrapaySign = new CardPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], '', $this->params['TIMESTAMP']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
