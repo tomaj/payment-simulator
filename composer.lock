@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "092b32b9e0bc610026b7c46c7c7126c7",
-    "content-hash": "ebeab0b8fee95447f34db94a315c2057",
+    "hash": "89a0c77e8050c1189829adbf3a5b60bd",
+    "content-hash": "8a21355a32eae9fa6912623b1efba206",
     "packages": [
         {
             "name": "guzzle/guzzle",
@@ -1353,16 +1353,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.1.7",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "5a4c8099a1547fe451256e056180ad4624177017"
+                "reference": "9963bc29d7f4398b137dd8efc480efe54fdbe5f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/5a4c8099a1547fe451256e056180ad4624177017",
-                "reference": "5a4c8099a1547fe451256e056180ad4624177017",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/9963bc29d7f4398b137dd8efc480efe54fdbe5f1",
+                "reference": "9963bc29d7f4398b137dd8efc480efe54fdbe5f1",
                 "shasum": ""
             },
             "require": {
@@ -1375,7 +1375,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1402,7 +1402,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-16 22:17:09"
+            "time": "2016-11-27 04:21:38"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1469,12 +1469,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tomaj/omnipay-tatra.git",
-                "reference": "de2af543532b91ed5eb78f569fb622e222427c7b"
+                "reference": "3a80e814b332bfc92cd5634e3e55d3129f66004f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tomaj/omnipay-tatra/zipball/de2af543532b91ed5eb78f569fb622e222427c7b",
-                "reference": "de2af543532b91ed5eb78f569fb622e222427c7b",
+                "url": "https://api.github.com/repos/tomaj/omnipay-tatra/zipball/3a80e814b332bfc92cd5634e3e55d3129f66004f",
+                "reference": "3a80e814b332bfc92cd5634e3e55d3129f66004f",
                 "shasum": ""
             },
             "require": {
@@ -1514,7 +1514,57 @@
                 "payment",
                 "tatrapay"
             ],
-            "time": "2016-11-24 12:13:34"
+            "time": "2016-12-06 14:00:23"
+        },
+        {
+            "name": "tomaj/omnipay-vub",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tomaj/omnipay-vub.git",
+                "reference": "764e5d93c8074a9a2790b49b4afd82e09c6f29e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tomaj/omnipay-vub/zipball/764e5d93c8074a9a2790b49b4afd82e09c6f29e5",
+                "reference": "764e5d93c8074a9a2790b49b4afd82e09c6f29e5",
+                "shasum": ""
+            },
+            "require": {
+                "omnipay/common": "~2.0"
+            },
+            "require-dev": {
+                "omnipay/tests": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Omnipay\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tomas Majer",
+                    "email": "tomasmajer@gmail.com"
+                }
+            ],
+            "description": "VUB eplatby driver for the Omnipay payment processing library",
+            "homepage": "https://github.com/tomaj/omnipay-vub",
+            "keywords": [
+                "epay",
+                "eplatby",
+                "gateway",
+                "merchant",
+                "omnipay",
+                "pay",
+                "payment",
+                "vub"
+            ],
+            "time": "2016-12-06 15:08:41"
         },
         {
             "name": "tracy/tracy",
@@ -1640,7 +1690,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "tomaj/omnipay-tatra": 20
+        "tomaj/omnipay-tatra": 20,
+        "tomaj/omnipay-vub": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

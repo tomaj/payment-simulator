@@ -8,6 +8,7 @@ use App\Gateways\TatraPay\TatraPayHmacSign;
 use App\Gateways\CardPay\CardPayAES256Sign;
 use App\Gateways\CardPay\CardPayDESSign;
 use App\Gateways\CardPay\CardPayHmacSign;
+use App\Gateways\Eplatby\VubEplatbyHmacSign;
 use Nette\Application\UI\Presenter;
 
 class PaymentPresenter extends Presenter
@@ -140,6 +141,29 @@ class PaymentPresenter extends Presenter
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
         $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
         $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
+
+        $this->template->computedSign = $computedSign;
+        $this->template->inputSign = $inputSign;
+        $this->template->params = $this->params;
+
+        $this->template->okReturnUrl = $okReturnUrl;
+        $this->template->failReturnUrl = $failReturnUrl;
+        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+    }
+
+    public function renderEplatbyHmac()
+    {
+        $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
+        $mid = $this->params['MID'];
+
+        $inputSign = $this->params['SIGN'];
+
+        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $computedSign = $eplatbySign->sign();
+// die('x');
+        $okReturnUrl = $eplatbySign->returnUrlSign('OK');
+        $failReturnUrl = $eplatbySign->returnUrlSign('FAIL');
+        $timeoutReturnUrl = $eplatbySign->returnUrlSign('TOUT');
 
         $this->template->computedSign = $computedSign;
         $this->template->inputSign = $inputSign;
