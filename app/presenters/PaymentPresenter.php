@@ -9,6 +9,7 @@ use App\Gateways\CardPay\CardPayAES256Sign;
 use App\Gateways\CardPay\CardPayDESSign;
 use App\Gateways\CardPay\CardPayHmacSign;
 use App\Gateways\Eplatby\VubEplatbyHmacSign;
+use App\Gateways\SporoPay\SporoPay3DesSign;
 use Nette\Application\UI\Presenter;
 
 class PaymentPresenter extends Presenter
@@ -160,10 +161,34 @@ class PaymentPresenter extends Presenter
 
         $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
         $computedSign = $eplatbySign->sign();
-// die('x');
+
         $okReturnUrl = $eplatbySign->returnUrlSign('OK');
         $failReturnUrl = $eplatbySign->returnUrlSign('FAIL');
         $timeoutReturnUrl = $eplatbySign->returnUrlSign('TOUT');
+
+        $this->template->computedSign = $computedSign;
+        $this->template->inputSign = $inputSign;
+        $this->template->params = $this->params;
+
+        $this->template->okReturnUrl = $okReturnUrl;
+        $this->template->failReturnUrl = $failReturnUrl;
+        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+    }
+
+    public function renderSporoPay3Des()
+    {
+        $sharedSecret = 'Z3qY08EpvLlAAoMZdnyUdQ==';
+        
+        $inputSign = $this->params['sign1'];
+
+        // dump($this->params);
+
+        $sporopaySign = new SporoPay3DesSign($sharedSecret, $this->params['pu_predcislo'], $this->params['pu_cislo'], $this->params['pu_kbanky'], $this->params['suma'], $this->params['mena'], $this->params['vs'], $this->params['ss'], $this->params['url'], $this->params['param']);
+        $computedSign = $sporopaySign->sign();
+
+        $okReturnUrl = $sporopaySign->returnUrlSign('OK');
+        $failReturnUrl = $sporopaySign->returnUrlSign('FAIL');
+        $timeoutReturnUrl = $sporopaySign->returnUrlSign('TOUT');
 
         $this->template->computedSign = $computedSign;
         $this->template->inputSign = $inputSign;

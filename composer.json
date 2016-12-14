@@ -21,7 +21,8 @@
 		"latte/latte": "^2.4",
 		"tracy/tracy": "^2.4",
 		"tomaj/omnipay-tatra": "dev-master",
-		"tomaj/omnipay-vub": "dev-master"
+		"tomaj/omnipay-vub": "dev-master",
+		"tomaj/omnipay-slsp": "dev-master"
 	},
 	"require-dev": {
 		"nette/tester": "^1.6"

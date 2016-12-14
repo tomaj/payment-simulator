@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "89a0c77e8050c1189829adbf3a5b60bd",
-    "content-hash": "8a21355a32eae9fa6912623b1efba206",
+    "hash": "cf0f825e624bc4eb0e9428d8b948e906",
+    "content-hash": "e0b05b6bbd2550062b6bc2e890fc12da",
     "packages": [
         {
             "name": "guzzle/guzzle",
@@ -1195,16 +1195,16 @@
         },
         {
             "name": "omnipay/common",
-            "version": "v2.5.1",
+            "version": "2.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/omnipay-common.git",
-                "reference": "731386e54688405a475d6dd43cd6397728cd709e"
+                "reference": "54910f2ece6b1be64f5e53e2111dd1254d50ee49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/omnipay-common/zipball/731386e54688405a475d6dd43cd6397728cd709e",
-                "reference": "731386e54688405a475d6dd43cd6397728cd709e",
+                "url": "https://api.github.com/repos/thephpleague/omnipay-common/zipball/54910f2ece6b1be64f5e53e2111dd1254d50ee49",
+                "reference": "54910f2ece6b1be64f5e53e2111dd1254d50ee49",
                 "shasum": ""
             },
             "require": {
@@ -1289,11 +1289,11 @@
                 "payment",
                 "purchase"
             ],
-            "time": "2016-07-07 09:52:09"
+            "time": "2016-11-07 06:10:23"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.14",
+            "version": "v2.8.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
@@ -1353,7 +1353,7 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.2.0",
+            "version": "v3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
@@ -1464,6 +1464,55 @@
             "time": "2016-11-14 01:06:16"
         },
         {
+            "name": "tomaj/omnipay-slsp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tomaj/omnipay-slsp.git",
+                "reference": "ac8440b62ef7959aa6e069680b4d7d3181f18269"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tomaj/omnipay-slsp/zipball/ac8440b62ef7959aa6e069680b4d7d3181f18269",
+                "reference": "ac8440b62ef7959aa6e069680b4d7d3181f18269",
+                "shasum": ""
+            },
+            "require": {
+                "omnipay/common": "~2.0"
+            },
+            "require-dev": {
+                "omnipay/tests": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Omnipay\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tomas Majer",
+                    "email": "tomasmajer@gmail.com"
+                }
+            ],
+            "description": "SLSP driver for the Omnipay payment processing library",
+            "homepage": "https://github.com/tomaj/omnipay-slsp",
+            "keywords": [
+                "gateway",
+                "merchant",
+                "omnipay",
+                "pay",
+                "payment",
+                "slsp",
+                "sporitelna"
+            ],
+            "time": "2016-12-14 12:09:25"
+        },
+        {
             "name": "tomaj/omnipay-tatra",
             "version": "dev-master",
             "source": {
@@ -1522,12 +1571,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tomaj/omnipay-vub.git",
-                "reference": "764e5d93c8074a9a2790b49b4afd82e09c6f29e5"
+                "reference": "131c3a89c3a9ad0deeb8946bf9c7da7f8310a61d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tomaj/omnipay-vub/zipball/764e5d93c8074a9a2790b49b4afd82e09c6f29e5",
-                "reference": "764e5d93c8074a9a2790b49b4afd82e09c6f29e5",
+                "url": "https://api.github.com/repos/tomaj/omnipay-vub/zipball/131c3a89c3a9ad0deeb8946bf9c7da7f8310a61d",
+                "reference": "131c3a89c3a9ad0deeb8946bf9c7da7f8310a61d",
                 "shasum": ""
             },
             "require": {
@@ -1564,20 +1613,20 @@
                 "payment",
                 "vub"
             ],
-            "time": "2016-12-06 15:08:41"
+            "time": "2016-12-07 15:08:17"
         },
         {
             "name": "tracy/tracy",
-            "version": "v2.4.3",
+            "version": "v2.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/tracy.git",
-                "reference": "9c352f10f41c374c5bb19191e385076430e39a20"
+                "reference": "c1ec73ea7661b79aa9fade863b75f8cad9f47bb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/tracy/zipball/9c352f10f41c374c5bb19191e385076430e39a20",
-                "reference": "9c352f10f41c374c5bb19191e385076430e39a20",
+                "url": "https://api.github.com/repos/nette/tracy/zipball/c1ec73ea7661b79aa9fade863b75f8cad9f47bb5",
+                "reference": "c1ec73ea7661b79aa9fade863b75f8cad9f47bb5",
                 "shasum": ""
             },
             "require": {
@@ -1626,7 +1675,7 @@
                 "debugger",
                 "nette"
             ],
-            "time": "2016-09-30 14:17:54"
+            "time": "2016-12-10 15:04:11"
         }
     ],
     "packages-dev": [
@@ -1691,7 +1740,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "tomaj/omnipay-tatra": 20,
-        "tomaj/omnipay-vub": 20
+        "tomaj/omnipay-vub": 20,
+        "tomaj/omnipay-slsp": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
