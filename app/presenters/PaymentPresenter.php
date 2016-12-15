@@ -8,6 +8,7 @@ use App\Gateways\TatraPay\TatraPayHmacSign;
 use App\Gateways\CardPay\CardPayAES256Sign;
 use App\Gateways\CardPay\CardPayDESSign;
 use App\Gateways\CardPay\CardPayHmacSign;
+use App\Gateways\ComfortPay\ComfortPayHmacSign;
 use App\Gateways\Eplatby\VubEplatbyHmacSign;
 use App\Gateways\SporoPay\SporoPay3DesSign;
 use Nette\Application\UI\Presenter;
@@ -152,6 +153,52 @@ class PaymentPresenter extends Presenter
         $this->template->timeoutReturnUrl = $timeoutReturnUrl;
     }
 
+    public function renderComfortpayHmac()
+    {
+        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+        $mid = $this->params['MID'];
+
+        $inputSign = $this->params['HMAC'];
+
+        $tatrapaySign = new ComfortPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'], $this->params['TPAY'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
+        $computedSign = $tatrapaySign->sign();
+
+        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
+        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
+        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
+
+        $this->template->computedSign = $computedSign;
+        $this->template->inputSign = $inputSign;
+        $this->template->params = $this->params;
+
+        $this->template->okReturnUrl = $okReturnUrl;
+        $this->template->failReturnUrl = $failReturnUrl;
+        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+    }
+
+    public function renderComfortpayAes256()
+    {
+        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+        $mid = $this->params['MID'];
+
+        $inputSign = $this->params['HMAC'];
+
+        $tatrapaySign = new ComfortPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'], $this->params['TPAY'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
+        $computedSign = $tatrapaySign->sign();
+
+        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
+        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
+        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
+
+        $this->template->computedSign = $computedSign;
+        $this->template->inputSign = $inputSign;
+        $this->template->params = $this->params;
+
+        $this->template->okReturnUrl = $okReturnUrl;
+        $this->template->failReturnUrl = $failReturnUrl;
+        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+    }
+
     public function renderEplatbyHmac()
     {
         $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
@@ -180,8 +227,6 @@ class PaymentPresenter extends Presenter
         $sharedSecret = 'Z3qY08EpvLlAAoMZdnyUdQ==';
         
         $inputSign = $this->params['sign1'];
-
-        // dump($this->params);
 
         $sporopaySign = new SporoPay3DesSign($sharedSecret, $this->params['pu_predcislo'], $this->params['pu_cislo'], $this->params['pu_kbanky'], $this->params['suma'], $this->params['mena'], $this->params['vs'], $this->params['ss'], $this->params['url'], $this->params['param']);
         $computedSign = $sporopaySign->sign();
