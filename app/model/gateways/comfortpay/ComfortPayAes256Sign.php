@@ -26,46 +26,44 @@ class ComfortPayAes256Sign
 
     private $name;
 
-    private $timestamp;
-
     private $tid;
 
     private $tpay;
 
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $rurl, $rem, $tpay, $timestamp, $ipc = '', $name = '')
+    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $rem, $tpay, $ipc = '', $name = '')
     {
         $this->sharedSecret = $sharedSecret;
         $this->mid = $mid;
         $this->amt = $amt;
         $this->curr = $curr;
         $this->vs = $vs;
+        $this->cs = $cs;
         $this->rurl = $rurl;
         $this->rem = $rem;
         $this->tpay = $tpay;
         $this->ipc = $ipc;
         $this->name = $name;
-        $this->timestamp = $timestamp;
         $this->ac = 111111;
+        $this->cid = 111111;
         $this->tid = '';
     }
 
     public function sign()
     {
-    	$base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->tpay}{$this->timestamp}";
+    	$base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}{$this->tpay}";
 
-        $hmacSign = new Aes256Sign();
+        $sign = new Aes256Sign();
 
-        return $hmacSign->sign($base, $this->sharedSecret);
+        return $sign->sign($base, $this->sharedSecret);
     }
 
     public function returnUrlSign($result)
     {
-    	return 'todo';
-        // $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->tid}{$this->timestamp}";
+         $base = "{$this->vs}{$result}{$this->ac}{$this->cid}";
 
-        // $hmacSign = new HmacSign();
-        // $sign = $hmacSign->sign($base, $this->sharedSecret);
+         $sign = new Aes256Sign();
+         $sign = $sign->sign($base, $this->sharedSecret);
 
-        // return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
+         return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}SIGN=" . $sign;
     }
 }

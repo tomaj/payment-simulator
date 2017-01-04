@@ -42,10 +42,13 @@ class ComfortPayHmacSign
         $this->rurl = $rurl;
         $this->rem = $rem;
         $this->tpay = $tpay;
+        $this->timestamp = $timestamp;
         $this->ipc = $ipc;
         $this->name = $name;
-        $this->timestamp = $timestamp;
         $this->ac = 111111;
+        $this->cid = 111111;
+        $this->cc = '1111********1111';
+        $this->rc = '123';
         $this->tid = '';
     }
 
@@ -60,12 +63,11 @@ class ComfortPayHmacSign
 
     public function returnUrlSign($result)
     {
-    	return 'todo';
-        // $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->tid}{$this->timestamp}";
+         $base = "{$this->amt}{$this->curr}{$this->vs}{$result}{$this->ac}{$result}{$this->cid}{$this->cc}{$this->rc}{$this->tid}{$this->timestamp}";
 
-        // $hmacSign = new HmacSign();
-        // $sign = $hmacSign->sign($base, $this->sharedSecret);
+         $hmacSign = new HmacSign();
+         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
-        // return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
+         return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&CC={$this->cc}&RC={$this->rc}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
     }
 }

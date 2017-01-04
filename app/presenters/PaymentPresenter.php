@@ -2,6 +2,7 @@
 
 namespace App\Presenters;
 
+use App\Gateways\ComfortPay\ComfortPayAes256Sign;
 use App\Gateways\TatraPay\TatraPayAES256Sign;
 use App\Gateways\TatraPay\TatraPayDESSign;
 use App\Gateways\TatraPay\TatraPayHmacSign;
@@ -178,17 +179,17 @@ class PaymentPresenter extends Presenter
 
     public function renderComfortpayAes256()
     {
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+        $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
         $mid = $this->params['MID'];
 
-        $inputSign = $this->params['HMAC'];
+        $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new ComfortPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'], $this->params['TPAY'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
-        $computedSign = $tatrapaySign->sign();
+        $comfortpaySign = new ComfortPayAes256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], $this->params['REM'], $this->params['TPAY'], $this->params['IPC'], $this->params['NAME']);
+        $computedSign = $comfortpaySign->sign();
 
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
+        $okReturnUrl = $comfortpaySign->returnUrlSign('OK');
+        $failReturnUrl = $comfortpaySign->returnUrlSign('FAIL');
+        $timeoutReturnUrl = $comfortpaySign->returnUrlSign('TOUT');
 
         $this->template->computedSign = $computedSign;
         $this->template->inputSign = $inputSign;
@@ -225,7 +226,7 @@ class PaymentPresenter extends Presenter
     public function renderSporoPay3Des()
     {
         $sharedSecret = 'Z3qY08EpvLlAAoMZdnyUdQ==';
-        
+
         $inputSign = $this->params['sign1'];
 
         $sporopaySign = new SporoPay3DesSign($sharedSecret, $this->params['pu_predcislo'], $this->params['pu_cislo'], $this->params['pu_kbanky'], $this->params['suma'], $this->params['mena'], $this->params['vs'], $this->params['ss'], $this->params['url'], $this->params['param']);
