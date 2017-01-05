@@ -2,7 +2,7 @@
 
 namespace App\Gateways\CardPay;
 
-use Omnipay\TatraPay\Sign\DesSign;
+use Omnipay\Core\Sign\DesSign;
 
 class CardPayDESSign
 {
@@ -35,6 +35,8 @@ class CardPayDESSign
         $this->vs = $vs;
         $this->cs = $cs;
         $this->rurl = $rurl;
+        $this->ipc = $ipc;
+        $this->name = $name;
         $this->ac = 111111;
     }
 

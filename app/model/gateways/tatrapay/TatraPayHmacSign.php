@@ -2,7 +2,7 @@
 
 namespace App\Gateways\TatraPay;
 
-use Omnipay\TatraPay\Sign\HmacSign;
+use Omnipay\Core\Sign\HmacSign;
 
 class TatraPayHmacSign
 {
@@ -51,8 +51,9 @@ class TatraPayHmacSign
         $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->timestamp}";
 
         $hmacSign = new HmacSign();
+        
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
-        return $this->rurl . "?VS={$this->vs}&RES={$result}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
+        return $this->rurl . "?VS={$this->vs}&RES={$result}&AMT={$this->amt}&CURR={$this->curr}&CS={$this->cs}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Gateways\TatraPay;
 
-use Omnipay\TatraPay\Sign\Aes256Sign;
+use Omnipay\Core\Sign\Aes256Sign;
 
 class TatraPayAES256Sign
 {
@@ -36,6 +36,7 @@ class TatraPayAES256Sign
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}";
 
         $aes256Sign = new Aes256Sign();
+
         return $aes256Sign->sign($base, $this->sharedSecret);
     }
 
@@ -44,6 +45,7 @@ class TatraPayAES256Sign
         $base = "{$this->vs}{$result}";
 
         $aes256Sign = new Aes256Sign();
+        
         $sign = $aes256Sign->sign($base, $this->sharedSecret);
 
         return $this->rurl . "?VS={$this->vs}&RES={$result}&SIGN={$sign}";

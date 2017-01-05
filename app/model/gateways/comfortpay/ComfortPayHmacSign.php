@@ -66,8 +66,9 @@ class ComfortPayHmacSign
          $base = "{$this->amt}{$this->curr}{$this->vs}{$result}{$this->ac}{$result}{$this->cid}{$this->cc}{$this->rc}{$this->tid}{$this->timestamp}";
 
          $hmacSign = new HmacSign();
+         
          $sign = $hmacSign->sign($base, $this->sharedSecret);
 
-         return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&CC={$this->cc}&RC={$this->rc}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
+         return $this->rurl . "?VS={$this->vs}&AMT={$this->amt}&CURR={$this->curr}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&CC={$this->cc}&RC={$this->rc}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
     }
 }

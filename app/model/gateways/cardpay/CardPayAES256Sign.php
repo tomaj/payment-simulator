@@ -2,7 +2,7 @@
 
 namespace App\Gateways\CardPay;
 
-use Omnipay\TatraPay\Sign\Aes256Sign;
+use Omnipay\Core\Sign\Aes256Sign;
 
 class CardPayAES256Sign
 {
@@ -37,11 +37,13 @@ class CardPayAES256Sign
         $this->rurl = $rurl;
         $this->rem = $rem;
         $this->ac = 111111;
+        $this->ipc = $ipc;
+        $this->name = $name;
     }
 
     public function sign()
     {
-        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->rem}";
+        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->rem}{$this->ipc}{$this->name}";
 
         $hmacSign = new Aes256Sign();
 

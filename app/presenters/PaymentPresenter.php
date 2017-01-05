@@ -69,7 +69,7 @@ class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['HMAC'];
 
-        $tatrapaySign = new TatraPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], $this->params['TIMESTAMP'], isset($this->params['REM']) ? $this->params['REM'] : '', $this->params['TIMESTAMP']);
+        $tatrapaySign = new TatraPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], isset($this->params['REM']) ? $this->params['REM'] : '', $this->params['TIMESTAMP']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -92,7 +92,7 @@ class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new CardPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $tatrapaySign = new CardPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], '', $this->params['IPC'], $this->params['NAME']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -115,7 +115,7 @@ class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new CardPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $tatrapaySign = new CardPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], $this->params['IPC'], $this->params['NAME']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -138,7 +138,7 @@ class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['HMAC'];
 
-        $tatrapaySign = new CardPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], '', $this->params['TIMESTAMP']);
+        $tatrapaySign = new CardPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], $this->params['REM'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');

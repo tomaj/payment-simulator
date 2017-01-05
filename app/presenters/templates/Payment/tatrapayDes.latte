@@ -1,14 +1,14 @@
 {block content}
 
-<h1>TatraPay simulator (AES 256 version)</h1>
+<h1>TatraPay simulator (DES version)</h1>
 
 <div>
     <p>Input Sign: <code>{$inputSign}</code></p>
     <p>Computed Sign: <code>{$computedSign}</code></p>
-    <p>
-        Params:
-    <pre>{php print_r($params)}</pre>
-    </p>
+    <div>
+        <h4>Params:</h4>
+        <pre>{php print_r($params)}</pre>
+    </div>
 </div>
 
 <div>

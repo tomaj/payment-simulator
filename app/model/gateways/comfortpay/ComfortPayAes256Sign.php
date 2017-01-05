@@ -64,6 +64,6 @@ class ComfortPayAes256Sign
          $sign = new Aes256Sign();
          $sign = $sign->sign($base, $this->sharedSecret);
 
-         return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}SIGN=" . $sign;
+         return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&SIGN=" . $sign;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Gateways\TatraPay;
 
-use Omnipay\TatraPay\Sign\DesSign;
+use Omnipay\Core\Sign\DesSign;
 
 class TatraPayDESSign
 {
