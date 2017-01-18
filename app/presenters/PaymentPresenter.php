@@ -223,7 +223,7 @@ class PaymentPresenter extends Presenter
         $this->template->timeoutReturnUrl = $timeoutReturnUrl;
     }
 
-    public function renderSporopay3Des()
+    public function renderSporopayDes()
     {
         $sharedSecret = 'Z3qY08EpvLlAAoMZdnyUdQ==';
 
