@@ -47,10 +47,8 @@ class SporoPay3DesSign
     {
     	$base = "{$this->pu_predcislo};{$this->pu_cislo};{$this->pu_kbanky};{$this->suma};{$this->mena};{$this->vs};{$this->ss};{$this->url};{$this->param}";
 
-    	var_dump($base);
-        
         $hmacSign = new Des3Sign();
-        
+
         return $hmacSign->sign($base, $this->sharedSecret);
     }
 

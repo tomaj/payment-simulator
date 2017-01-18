@@ -31,11 +31,8 @@ class VubEplatbyHmacSign
     public function sign()
     {
         $base = "{$this->mid}{$this->amt}{$this->vs}{$this->cs}{$this->rurl}";
-        // var_dump($base);
 
         $hmacSign = new HmacSign();
-        // var_dump($hmacSign->sign($base, $this->sharedSecret));
-        // var_dump($hmacSign->sign('1111111110.001234560321http://localhost:4444/testserver.php', $this->sharedSecret));
 
         return $hmacSign->sign($base, $this->sharedSecret);
     }
