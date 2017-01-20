@@ -202,12 +202,13 @@ class PaymentPresenter extends Presenter
 
     public function renderEplatbyHmac()
     {
+        $params = $this->getRequest()->getPost();
         $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $this->params['MID'];
+        $mid = $params['MID'];
 
-        $inputSign = $this->params['SIGN'];
+        $inputSign = $params['SIGN'];
 
-        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $params['AMT'], $params['VS'], $params['CS'], $params['RURL']);
         $computedSign = $eplatbySign->sign();
 
         $okReturnUrl = $eplatbySign->returnUrlSign('OK');
@@ -216,7 +217,7 @@ class PaymentPresenter extends Presenter
 
         $this->template->computedSign = $computedSign;
         $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
+        $this->template->params = $params;
 
         $this->template->okReturnUrl = $okReturnUrl;
         $this->template->failReturnUrl = $failReturnUrl;
