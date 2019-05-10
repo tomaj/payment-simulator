@@ -208,7 +208,12 @@ class PaymentPresenter extends Presenter
 
         $inputSign = $params['SIGN'];
 
-        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $params['AMT'], $params['VS'], $params['CS'], $params['RURL']);
+        $ss = '';
+        if (isset($params['SS'])) {
+            $ss = $params['SS'];
+        }
+
+        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $params['AMT'], $params['VS'], $params['CS'], $params['RURL'], $ss);
         $computedSign = $eplatbySign->sign();
 
         $okReturnUrl = $eplatbySign->returnUrlSign('OK');

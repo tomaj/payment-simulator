@@ -16,9 +16,11 @@ class VubEplatbyHmacSign
 
     private $cs;
 
+    private $ss;
+
     private $rurl;
 
-    public function __construct($sharedSecret, $mid, $amt, $vs, $cs, $rurl)
+    public function __construct($sharedSecret, $mid, $amt, $vs, $cs, $rurl, $ss = '')
     {
         $this->sharedSecret = $sharedSecret;
         $this->mid = $mid;
@@ -26,11 +28,12 @@ class VubEplatbyHmacSign
         $this->vs = $vs;
         $this->cs = $cs;
         $this->rurl = $rurl;
+        $this->ss = $ss;
     }
 
     public function sign()
     {
-        $base = "{$this->mid}{$this->amt}{$this->vs}{$this->cs}{$this->rurl}";
+        $base = "{$this->mid}{$this->amt}{$this->vs}{$this->cs}{$this->ss}{$this->rurl}";
 
         $hmacSign = new HmacSign();
 
