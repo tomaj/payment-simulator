@@ -2,6 +2,7 @@
 
 namespace App\Gateways\ComfortPay;
 
+use Nette\Utils\Strings;
 use Omnipay\Core\Sign\Aes256Sign;
 
 class ComfortPayAes256Sign
@@ -59,11 +60,15 @@ class ComfortPayAes256Sign
 
     public function returnUrlSign($result)
     {
-         $base = "{$this->vs}{$result}{$this->ac}{$this->cid}";
+        $base = "{$this->vs}{$result}{$this->ac}{$this->cid}";
 
-         $sign = new Aes256Sign();
-         $sign = $sign->sign($base, $this->sharedSecret);
+        $sign = new Aes256Sign();
+        $sign = $sign->sign($base, $this->sharedSecret);
 
-         return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&SIGN=" . $sign;
+        $params = "VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&SIGN=" . $sign;
+        if (Strings::contains($this->rurl, '?')) {
+            return $this->rurl . '&' . $params;
+        }
+        return $this->rurl . "?" . $params;
     }
 }

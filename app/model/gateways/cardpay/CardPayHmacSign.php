@@ -2,7 +2,7 @@
 
 namespace App\Gateways\CardPay;
 
-
+use Nette\Utils\Strings;
 use Omnipay\Core\Sign\HmacSign;
 
 class CardPayHmacSign
@@ -67,6 +67,10 @@ class CardPayHmacSign
         $hmacSign = new HmacSign();
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
-        return $this->rurl . "?VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&AMT={$this->amt}&CURR={$this->curr}&CID=&CC={$this->cc}&AC={$this->ac}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
+        $params = "VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&AMT={$this->amt}&CURR={$this->curr}&CID=&CC={$this->cc}&AC={$this->ac}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
+        if (Strings::contains($this->rurl, '?')) {
+            return $this->rurl . '&' . $params;
+        }
+        return $this->rurl . "?" . $params;
     }
 }

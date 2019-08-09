@@ -2,6 +2,7 @@
 
 namespace App\Gateways\TatraPay;
 
+use Nette\Utils\Strings;
 use Omnipay\Core\Sign\Aes256Sign;
 
 class TatraPayAES256Sign
@@ -48,6 +49,10 @@ class TatraPayAES256Sign
         
         $sign = $aes256Sign->sign($base, $this->sharedSecret);
 
-        return $this->rurl . "?VS={$this->vs}&RES={$result}&SIGN={$sign}";
+        $params = "VS={$this->vs}&RES={$result}&SIGN={$sign}";
+        if (Strings::contains($this->rurl, '?')) {
+            return $this->rurl . '&' . $params;
+        }
+        return $this->rurl . "?" . $params;
     }
 }

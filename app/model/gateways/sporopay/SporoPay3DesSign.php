@@ -2,6 +2,7 @@
 
 namespace App\Gateways\SporoPay;
 
+use Nette\Utils\Strings;
 use Omnipay\SporoPay\Sign\Des3Sign;
 
 class SporoPay3DesSign
@@ -59,6 +60,10 @@ class SporoPay3DesSign
         $hmacSign = new Des3Sign();
         $sign = $hmacSign->sign($data, $this->sharedSecret);
 
-        return $this->url . "?u_predcislo={$this->u_predcislo}&u_cislo={$this->u_cislo}&u_kbanky={$this->u_kbanky}&pu_predcislo={$this->pu_predcislo}&pu_cislo={$this->pu_cislo}&pu_kbanky={$this->pu_kbanky}&suma={$this->suma}&mena={$this->mena}&vs={$this->vs}&ss={$this->ss}&url=".urlencode($this->url)."&param=".urlencode($this->param)."&result={$result}&real={$result}&SIGN2=" . $sign;
+        $params = "u_predcislo={$this->u_predcislo}&u_cislo={$this->u_cislo}&u_kbanky={$this->u_kbanky}&pu_predcislo={$this->pu_predcislo}&pu_cislo={$this->pu_cislo}&pu_kbanky={$this->pu_kbanky}&suma={$this->suma}&mena={$this->mena}&vs={$this->vs}&ss={$this->ss}&url=".urlencode($this->url)."&param=".urlencode($this->param)."&result={$result}&real={$result}&SIGN2=" . $sign;
+        if (Strings::contains($this->rurl, '?')) {
+            return $this->rurl . '&' . $params;
+        }
+        return $this->rurl . "?" . $params;
     }
 }

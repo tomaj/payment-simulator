@@ -2,6 +2,7 @@
 
 namespace App\Gateways\CardPay;
 
+use Nette\Utils\Strings;
 use Omnipay\Core\Sign\Aes256Sign;
 
 class CardPayAES256Sign
@@ -57,6 +58,10 @@ class CardPayAES256Sign
         $hmacSign = new Aes256Sign();
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
-        return $this->rurl . "?VS={$this->vs}&AC={$this->ac}&RES={$result}&SIGN=" . $sign;
+        $params = "VS={$this->vs}&AC={$this->ac}&RES={$result}&SIGN=" . $sign;
+        if (Strings::contains($this->rurl, '?')) {
+            return $this->rurl . '&' . $params;
+        }
+        return $this->rurl . "?" . $params;
     }
 }

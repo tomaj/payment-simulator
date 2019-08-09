@@ -2,6 +2,7 @@
 
 namespace App\Gateways\TatraPay;
 
+use Nette\Utils\Strings;
 use Omnipay\Core\Sign\DesSign;
 
 class TatraPayDESSign
@@ -47,6 +48,10 @@ class TatraPayDESSign
         $desSign = new DesSign();
         $sign = $desSign->sign($base, $this->sharedSecret);
 
-        return $this->rurl . "?VS={$this->vs}&RES={$result}&SIGN={$sign}";
+        $params = "VS={$this->vs}&RES={$result}&SIGN={$sign}";
+        if (Strings::contains($this->rurl, '?')) {
+            return $this->rurl . '&' . $params;
+        }
+        return $this->rurl . "?" . $params;
     }
 }
