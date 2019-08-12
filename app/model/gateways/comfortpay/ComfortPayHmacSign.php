@@ -2,6 +2,7 @@
 
 namespace App\Gateways\ComfortPay;
 
+use Nette\Utils\Strings;
 use Omnipay\Core\Sign\HmacSign;
 
 class ComfortPayHmacSign
