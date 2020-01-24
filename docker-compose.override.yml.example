@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  nginx:
+    ports:
+      - "8080:80" # change the 8080 port to one you want this service to be exposed on
+
+  payment_simulator:
+    environment:
+      XDEBUG_CONFIG: "remote_host=172.17.0.1"
+      PHP_IDE_CONFIG: "serverName=payment_simulator.test"
+    volumes:
+      - "/home/rootpd/.cache/composer:/composer:rw"

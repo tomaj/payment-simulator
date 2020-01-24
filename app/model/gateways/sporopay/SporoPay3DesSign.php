@@ -56,14 +56,13 @@ class SporoPay3DesSign
     public function returnUrlSign($result)
     {
         $data = "{$this->u_predcislo};{$this->u_cislo};{$this->u_kbanky};{$this->pu_predcislo};{$this->pu_cislo};{$this->pu_kbanky};{$this->suma};{$this->mena};{$this->vs};{$this->ss};{$this->url};{$this->param};{$result};{$result}";
-
         $hmacSign = new Des3Sign();
         $sign = $hmacSign->sign($data, $this->sharedSecret);
 
-        $params = "u_predcislo={$this->u_predcislo}&u_cislo={$this->u_cislo}&u_kbanky={$this->u_kbanky}&pu_predcislo={$this->pu_predcislo}&pu_cislo={$this->pu_cislo}&pu_kbanky={$this->pu_kbanky}&suma={$this->suma}&mena={$this->mena}&vs={$this->vs}&ss={$this->ss}&url=".urlencode($this->url)."&param=".urlencode($this->param)."&result={$result}&real={$result}&SIGN2=" . $sign;
+        $params = "u_predcislo={$this->u_predcislo}&u_cislo={$this->u_cislo}&u_kbanky={$this->u_kbanky}&pu_predcislo={$this->pu_predcislo}&pu_cislo={$this->pu_cislo}&pu_kbanky={$this->pu_kbanky}&suma={$this->suma}&mena={$this->mena}&vs={$this->vs}&ss={$this->ss}&url=".rawurlencode($this->url)."&param=".rawurlencode($this->param)."&result={$result}&real={$result}&SIGN2=" . rawurlencode($sign);
         if (Strings::contains($this->rurl, '?')) {
-            return $this->rurl . '&' . $params;
+            return $this->url . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->url . "?" . $params;
     }
 }
