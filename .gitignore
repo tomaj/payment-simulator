@@ -2,3 +2,4 @@ temp
 log
 vendor
 .idea
+docker-compose.override.yml
