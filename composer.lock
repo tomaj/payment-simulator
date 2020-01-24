@@ -2437,19 +2437,20 @@
         },
         {
             "name": "tomaj/omnipay-slsp",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tomaj/omnipay-slsp.git",
-                "reference": "4f919bf38a16cef53af54f5c40bd637c00e3a6f5"
+                "reference": "a05481a1d79b55064d1dce56b03402c0adfb0977"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tomaj/omnipay-slsp/zipball/4f919bf38a16cef53af54f5c40bd637c00e3a6f5",
-                "reference": "4f919bf38a16cef53af54f5c40bd637c00e3a6f5",
+                "url": "https://api.github.com/repos/tomaj/omnipay-slsp/zipball/a05481a1d79b55064d1dce56b03402c0adfb0977",
+                "reference": "a05481a1d79b55064d1dce56b03402c0adfb0977",
                 "shasum": ""
             },
             "require": {
+                "ext-openssl": "*",
                 "omnipay/common": "~3.0"
             },
             "require-dev": {
@@ -2483,7 +2484,7 @@
                 "slsp",
                 "sporitelna"
             ],
-            "time": "2019-03-08T06:53:20+00:00"
+            "time": "2020-01-24T10:22:34+00:00"
         },
         {
             "name": "tomaj/omnipay-tatra",
