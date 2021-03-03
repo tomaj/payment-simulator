@@ -14,7 +14,11 @@ use App\Model\Gateways\CardPay\CardPayHmacSign;
 use App\Model\Gateways\ComfortPay\ComfortPayHmacSign;
 use App\Model\Gateways\Eplatby\VubEplatbyHmacSign;
 use App\Model\Gateways\SporoPay\SporoPay3DesSign;
+use App\Model\Gateways\CardPay\CardPayAuthorizeHmacSign;
+use App\Model\Responses\CancelAuthorizationResponse;
 use Nette\Application\UI\Presenter;
+use Omnipay\Core\Sign\HmacSign;
+
 
 
 class PaymentPresenter extends Presenter
@@ -252,5 +256,109 @@ class PaymentPresenter extends Presenter
         $this->template->okReturnUrl = $okReturnUrl;
         $this->template->failReturnUrl = $failReturnUrl;
         $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+    }
+
+    public function renderCardpayAuthorizeHmac(): void
+    {
+        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+        $inputSign = $this->params['HMAC'];
+
+        $cardPayAuthorizeHmacSign = new CardPayAuthorizeHmacSign(
+            $sharedSecret,
+            $this->getParameter('MID'),
+            $this->getParameter('AMT'),
+            $this->getParameter('CURR'),
+            $this->getParameter('VS'),
+            $this->getParameter('RURL'),
+            $this->getParameter('IPC'),
+            $this->getParameter('NAME'),
+            $this->getParameter('TIMESTAMP'),
+            $this->getParameter('E2E', ''),
+            $this->getParameter('TXN', ''),
+            $this->getParameter('REM', ''),
+            $this->getParameter('TPAY', ''),
+            $this->getParameter('CID', ''),
+            $this->getParameter('ECID', ''),
+            $this->getParameter('TDS_CARDHOLDER', ''),
+            $this->getParameter('TDS_EMAIL', ''),
+            $this->getParameter('TDS_MOBILE_PHONE', ''),
+            $this->getParameter('TDS_BILL_CITY', ''),
+            $this->getParameter('TDS_BILL_COUNTRY', ''),
+            $this->getParameter('TDS_BILL_ADDRESS1', ''),
+            $this->getParameter('TDS_BILL_ADDRESS2', ''),
+            $this->getParameter('TDS_BILL_ZIP', ''),
+            $this->getParameter('TDS_SHIP_CITY', ''),
+            $this->getParameter('TDS_SHIP_COUNTRY', ''),
+            $this->getParameter('TDS_SHIP_ADDRESS1', ''),
+            $this->getParameter('TDS_SHIP_ADDRESS2', ''),
+            $this->getParameter('TDS_SHIP_ZIP', ''),
+            $this->getParameter('TDS_ADDR_MATCH', '')
+        );
+
+        $computedSign = $cardPayAuthorizeHmacSign->sign();
+
+        $okReturnUrl = $cardPayAuthorizeHmacSign->returnUrlSign('OK');
+        $failReturnUrl = $cardPayAuthorizeHmacSign->returnUrlSign('FAIL');
+        $timeoutReturnUrl = $cardPayAuthorizeHmacSign->returnUrlSign('TOUT');
+
+        $this->template->computedSign = $computedSign;
+        $this->template->inputSign = $inputSign;
+        $this->template->params = $this->params;
+
+        $this->template->okReturnUrl = $okReturnUrl;
+        $this->template->failReturnUrl = $failReturnUrl;
+        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+    }
+
+    public function actionCardpayCancelPurchase()
+    {
+        $successXml = <<<XML
+<?xml version="1.0" encoding="windows-1250"?>
+    <cardpay>
+    <request>
+        <mid>{$this->params['MID']}</mid>
+        <amt>{$this->params['AMT']}</amt>
+        <tid>{$this->params['TID']}</tid>
+        <txn>{$this->params['TXN']}</txn>
+        <timestamp>{$this->params['TIMESTAMP']}</timestamp>
+    </request>
+    <result>
+        <res>OK</res>
+    </result>
+</cardpay>
+XML;
+
+        $failXml = <<<XML
+<?xml version="1.0" encoding="windows-1250"?>
+    <cardpay>
+    <request>
+        <mid>{$this->params['MID']}</mid>
+        <amt>{$this->params['AMT']}</amt>
+        <tid>{$this->params['TID']}</tid>
+        <txn>{$this->params['TXN']}</txn>
+        <timestamp>{$this->params['TIMESTAMP']}</timestamp>
+    </request>
+    <result>
+        <res>FAIL</res>
+        <errorCode>10</errorCode>
+    </result>
+</cardpay>
+XML;
+
+        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+
+        $hmacSign = new HmacSign();
+        $input = "{$this->params['MID']}{$this->params['AMT']}picka{$this->params['TID']}{$this->params['VS']}{$this->params['TXN']}{$this->getParameter('REM', '')}{$this->params['TIMESTAMP']}";
+
+        if ($this->params['HMAC'] !== $hmacSign->sign($input, $sharedSecret)) {
+            $response = new CancelAuthorizationResponse($failXml, []);
+            $this->sendResponse($response);
+        }
+
+        $response = new CancelAuthorizationResponse($successXml, [
+            'Authorization' => "HMAC={$hmacSign->sign($successXml, $sharedSecret)},ECDSA=3046022100a4e5491ab9376f8cd9e51c176f5e75bb3664e3f852e901d36ac0a5b0f2177fad0221008794e59ab8027c68ae74ea65d0f5b5913865db9a818044d06c114f4d84346f48, ECDSA_KEY=1",
+        ]);
+
+        $this->sendResponse($response);
     }
 }
