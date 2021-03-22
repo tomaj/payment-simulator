@@ -348,7 +348,8 @@ XML;
         $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
 
         $hmacSign = new HmacSign();
-        $input = "{$this->params['MID']}{$this->params['AMT']}picka{$this->params['TID']}{$this->params['VS']}{$this->params['TXN']}{$this->getParameter('REM', '')}{$this->params['TIMESTAMP']}";
+        $input = "{$this->getParameter('MID', '')}{$this->getParameter('AMT', '')}{$this->getParameter('TID', '')}";
+        $input .= "{$this->getParameter('VS', '')}{$this->getParameter('TXN', '')}{$this->getParameter('REM', '')}{$this->getParameter('TIMESTAMP', '')}";
 
         if ($this->params['HMAC'] !== $hmacSign->sign($input, $sharedSecret)) {
             $response = new CancelAuthorizationResponse($failXml, []);
