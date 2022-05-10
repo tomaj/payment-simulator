@@ -16,12 +16,15 @@ use App\Model\Gateways\Eplatby\VubEplatbyHmacSign;
 use App\Model\Gateways\SporoPay\SporoPay3DesSign;
 use App\Model\Gateways\CardPay\CardPayAuthorizeHmacSign;
 use App\Model\Responses\CancelAuthorizationResponse;
+use Nette\Application\Responses\JsonResponse;
 use Nette\Application\UI\Presenter;
+use Nette\Utils\Json;
+use Nette\Utils\JsonException;
+use Nette\Utils\Random;
 use Omnipay\Core\Sign\HmacSign;
 
 
-
-class PaymentPresenter extends Presenter
+final class PaymentPresenter extends Presenter
 {
     public function renderTatrapayAes256(): void
     {
@@ -361,5 +364,124 @@ XML;
         ]);
 
         $this->sendResponse($response);
+    }
+
+
+    // todo move to separate presenter and add router
+
+    private function generateAuthorizationCode($letters = 2, $numbers = 4): string
+    {
+        return Random::generate($letters,'A-Z') . Random::generate($numbers, '0-9');
+    }
+
+    private function checkAuthorization($body, $sharedSecret): bool
+    {
+        $hmacSign = new HmacSign();
+        $input = $body;
+        $auth = $hmacSign->sign($input, $sharedSecret);
+        $header = $this->getHttpRequest()->getHeader("Authorization");
+        $parts = explode('=', $header);
+        return $parts[1] === $auth;
+    }
+
+    public function renderCardPayDirectPayPostTransaction(): void
+    {
+        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+        $httpRequest = $this->getHttpRequest();
+        $requestBody = $httpRequest->getRawBody();
+
+        if (!$this->checkAuthorization($requestBody, $sharedSecret)) {
+            $response = new JsonResponse([
+                "error" => "Invalid authorization header"
+            ]);
+            $httpResponse = $this->getHttpResponse();
+            $httpResponse->setCode(\Nette\Http\IResponse::S400_BAD_REQUEST);
+            $this->sendResponse($response);
+        }
+
+        try {
+            $body = Json::decode($requestBody, Json::FORCE_ARRAY);
+        } catch (JsonException $jsonException) {
+            $response = new JsonResponse([
+                "error" => "Cannot process Google Pay token"
+            ]);
+            $this->sendResponse($response);
+        }
+
+
+        $processingId = 10000 + rand(0, 9999);
+
+        $timestamp = date('dmYHis');
+
+        $data = [
+            "processingId" => $processingId,
+//            "status" => "OK", // FAIL, TDS_AUTH_REQUIRED
+            "status" => "TDS_AUTH_REQUIRED",
+            "transactionId" => rand(100000, 199999),
+            "transactionData" => [
+                "authorizationCode" => $this->generateAuthorizationCode(),
+                "responseCode" => "00",
+            ],
+            "tdsRedirectionFormHtml" => "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>3D Secure
+Processing</title></head><body><form action=\"{$this->getHttpRequest()->getUrl()->getScheme()}://{$this->getHttpRequest()->getUrl()->getHost()}/cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds\" method=\"POST\" name=\"redirectionForm\">
+<input type=\"hidden\" name=\"tdsTermUrl\" value=\"{$body['tdsTermUrl']}\">
+<input type=\"hidden\" name=\"processingId\" value=\"{$processingId}\">
+<input type=\"hidden\" name=\"timestamp\" value=\"{$timestamp}\">
+<input type=\"hidden\" name=\"signature\" value=\"signature\"><noscript>
+<button type=\"submit\">Continue</button></noscript><script>document.forms.redirectionForm.submit();</script>
+</form></body></html>"
+        ];
+
+
+        // todo - kedy vratim error na test?
+        // todo - doplnit applepay
+
+        $response = new JsonResponse($data);
+
+        $this->appendResponseHmac($response, $sharedSecret);
+        $this->sendResponse($response);
+    }
+
+    public function renderCardPayDirectPayCheckTransaction($processingId): void
+    {
+        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+        $httpRequest = $this->getHttpRequest();
+        $signString = "{$httpRequest->getHeader("X-Merchant-Id")};{$httpRequest->getHeader("X-Timestamp")};{$processingId}";
+
+        if (!$this->checkAuthorization($signString, $sharedSecret)) {
+            $response = new JsonResponse([
+                "error" => "Invalid authorization header"
+            ]);
+            $httpResponse = $this->getHttpResponse();
+            $httpResponse->setCode(\Nette\Http\IResponse::S400_BAD_REQUEST);
+            $this->sendResponse($response);
+        }
+
+        $response = new JsonResponse([
+            "processingId" => $processingId,
+            "status" => "OK",
+            "transactionId" => rand(100000, 199999),
+            "transactionData" => [
+                "authorizationCode" => $this->generateAuthorizationCode(),
+                "responseCode" => "00",
+            ],
+        ]);
+
+        $this->appendResponseHmac($response, $sharedSecret);
+        $this->sendResponse($response);
+    }
+
+    private function appendResponseHmac(JsonResponse $response, string $sharedSecret): void
+    {
+        $hmacSign = new HmacSign();
+        $payloadData = Json::encode($response->getPayload());
+        $auth = $hmacSign->sign($payloadData, $sharedSecret);
+        $this->getHttpResponse()->addHeader("Authorization", "HMAC={$auth}, ECDSA=ecdsa, ECDSA_KEY=1");
+    }
+
+    public function renderCardPayDirectPay3ds(): void
+    {
+        $this->template->tdsTermUrl = $this->getHttpRequest()->getPost('tdsTermUrl');
+        $this->template->params = $this->getHttpRequest()->getPost();
     }
 }
