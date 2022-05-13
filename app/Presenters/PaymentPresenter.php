@@ -399,6 +399,10 @@ XML;
             $this->sendResponse($response);
         }
 
+        $isGooglePay = false;
+//        $isApplePay = false;
+        $isTds = false;
+
         try {
             $body = Json::decode($requestBody, Json::FORCE_ARRAY);
         } catch (JsonException $jsonException) {
@@ -408,33 +412,45 @@ XML;
             $this->sendResponse($response);
         }
 
+        if (isset($body['googlePayToken'])) {
+            $isGooglePay = true;
+        }
+
+        $status = "OK";
+
+        if ($isGooglePay) {
+            if ($body['amount'] >= 10*100) {
+                $status = "TDS_AUTH_REQUIRED";
+                $isTds = true;
+            }
+        }
+        if ($body['amount'] >= 100*100) {
+            $status = "FAIL";
+        }
 
         $processingId = 10000 + rand(0, 9999);
 
-        $timestamp = date('dmYHis');
-
         $data = [
             "processingId" => $processingId,
-//            "status" => "OK", // FAIL, TDS_AUTH_REQUIRED
-            "status" => "TDS_AUTH_REQUIRED",
+            "status" => $status, // FAIL, TDS_AUTH_REQUIRED
             "transactionId" => rand(100000, 199999),
             "transactionData" => [
                 "authorizationCode" => $this->generateAuthorizationCode(),
                 "responseCode" => "00",
             ],
-            "tdsRedirectionFormHtml" => "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>3D Secure
+        ];
+
+        if ($isTds) {
+            $timestamp = date('dmYHis');
+            $data['tdsRedirectionFormHtml'] = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>3D Secure
 Processing</title></head><body><form action=\"{$this->getHttpRequest()->getUrl()->getScheme()}://{$this->getHttpRequest()->getUrl()->getHost()}/cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds\" method=\"POST\" name=\"redirectionForm\">
 <input type=\"hidden\" name=\"tdsTermUrl\" value=\"{$body['tdsTermUrl']}\">
 <input type=\"hidden\" name=\"processingId\" value=\"{$processingId}\">
 <input type=\"hidden\" name=\"timestamp\" value=\"{$timestamp}\">
 <input type=\"hidden\" name=\"signature\" value=\"signature\"><noscript>
 <button type=\"submit\">Continue</button></noscript><script>document.forms.redirectionForm.submit();</script>
-</form></body></html>"
-        ];
-
-
-        // todo - kedy vratim error na test?
-        // todo - doplnit applepay
+</form></body></html>";
+        }
 
         $response = new JsonResponse($data);
 

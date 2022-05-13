@@ -4,12 +4,71 @@
 <div class="row">
 	<div  class="col-md-12">
 		<div class="jumbotron">
-			<h1>Payment simulator</h1>
-			<p>Todo description - supported banks, documetations</p>
-			<p>todo</p>
+			<h1>Payment Simulator</h1>
+			<p>
+				Simple simulator for online payments from <strong>Tatrabanka</strong>, <strong>SLSP</strong>, <strong>VUB</strong>
+			</p>
+			<p>
+				Supported gateways:
+			</p>
+			<ul>
+				<li>TatraPay</li>
+				<li>CardPay <small>(with ApplePay and Google pay support)</small></li>
+				<li>ComfortPay <small>(with recurrent payment support)</small></li>
+				<li>EPlatby</li>
+				<li>SporoPay</li>
+			</ul>
+
+
+			Whole simulator is <a href="https://github.com/tomaj/payment-simulator" target="_blank">open-source</a>. Feel free to contribute.
+			<!--
 			<p>
 				<a class="btn btn-lg btn-primary" href="../../components/navbar/" role="button">View navbar docs &raquo;</a>
 			</p>
+			-->
 		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<h2>Changelog</h2>
+		<hr>
+
+
+		<h4>13.5.2022</h4>
+		<p>
+
+			<strong>Support for TatraBanka CardPay Direct API (ApplePay + GooglePay).</strong>
+			<br><br>
+			Official (but not final documentation) can be <a href="/tatrabanka/cardpay-direct-api-v0.3.pdf" target="_blank">found here</a>. Client package will be open sourced later<br><br>
+			Basic output looks like this:
+		</p>
+<pre>
+{
+   "processingId": 1117, // random number
+   "status": "OK", // described below
+   "transactionId": 45874531, // random number
+   "transactionData": {
+      "authorizationCode": "MH1234", // random code
+      "responseCode": "00" // always 00
+   }
+}
+</pre>
+		<p>
+			Status is based on sent <i>amount</i>.
+		</p>
+		<ul>
+			<li>If you send <strong><10</strong> you will receive <code>OK</code> status</li>
+			<li>If you send <strong>>10</strong> you will receive <code>TDS_AUTH_REQUIRED</code> (3DSecure enabled - but valid for GooglePay)</li>
+			<li>If you send <strong>100</strong> you will receive <code>FAIL</code></li>
+		</ul>
+
+		<hr>
+
+		<h4>??.??.????</h4>
+		<p>
+			First changelog item ;-)
+		</p>
 	</div>
 </div>

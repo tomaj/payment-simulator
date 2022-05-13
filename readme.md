@@ -1,4 +1,4 @@
 Payment simulator
 =================
 
-todo readme
+[More info here](https://platby.tomaj.sk/)
