@@ -497,7 +497,7 @@ Processing</title></head><body><form action=\"{$this->getHttpRequest()->getUrl()
 
     public function renderCardPayDirectPay3ds(): void
     {
-        $this->getHttpResponse()->setHeader("X-Frame-Options", "Allow-From: *");
+        header_remove("X-Frame-Options");
         $this->template->tdsTermUrl = $this->getHttpRequest()->getPost('tdsTermUrl');
         $this->template->params = $this->getHttpRequest()->getPost();
     }
