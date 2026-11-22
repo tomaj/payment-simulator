@@ -36,6 +36,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Added
 
+- PHPUnit test suite: every gateway signature and return URL against vectors computed with the `openssl` CLI; the whole app run in-process for every page (correct, wrong, wrong-case signature, missing parameters), CardPay cancel and the Direct API; round trips with the released `tomaj/omnipay-tatra`, `omnipay-vub` and `omnipay-slsp` gateways in test mode ([#22](https://github.com/tomaj/payment-simulator/issues/22)).
 - `LICENSE.md` (MIT); `composer.json` declares `MIT` instead of the four licences of the Nette sandbox skeleton the project started from. `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `RELEASING.md`, issue forms and a pull request template ([#17](https://github.com/tomaj/payment-simulator/issues/17)).
 - GitHub Actions CI (PHP 8.3 - 8.6, nightly 8.7): PHP and Latte lint, DI container boot, PHP-CS-Fixer (PER-CS),
   PHPStan level 5 with strict rules, `composer audit`, Dependabot ([#15](https://github.com/tomaj/payment-simulator/pull/15)).

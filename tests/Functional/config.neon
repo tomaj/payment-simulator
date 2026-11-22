@@ -1,0 +1,3 @@
+# The tests record the HTTP response instead of sending headers
+services:
+	http.response: App\Tests\Functional\RecordingResponse
