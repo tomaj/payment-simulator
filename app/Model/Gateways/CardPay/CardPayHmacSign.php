@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\CardPay;
 
-use Nette\Utils\Strings;
 use Omnipay\Core\Sign\HmacSign;
 
 class CardPayHmacSign
@@ -18,8 +17,6 @@ class CardPayHmacSign
     private $curr;
 
     private $vs;
-
-    private $cs;
 
     private $rurl;
 
@@ -37,14 +34,17 @@ class CardPayHmacSign
 
     private $txn;
 
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $rem, $timestamp, $ipc = '', $name = '', $txn = '', $tpay = '')
+    private $ac;
+
+    private $tpay;
+
+    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $rurl, $rem, $timestamp, $ipc = '', $name = '', $txn = '', $tpay = '')
     {
         $this->sharedSecret = $sharedSecret;
         $this->mid = $mid;
         $this->amt = $amt;
         $this->curr = $curr;
         $this->vs = $vs;
-        $this->cs = $cs;
         $this->rurl = $rurl;
         $this->rem = $rem;
         $this->ipc = $ipc;
@@ -59,7 +59,7 @@ class CardPayHmacSign
 
     public function sign(): string
     {
-    	$base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->txn}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->tpay}{$this->timestamp}";
+        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->txn}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->tpay}{$this->timestamp}";
 
         $hmacSign = new HmacSign();
 
@@ -82,9 +82,9 @@ class CardPayHmacSign
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
         $params = "VS={$this->vs}&TXN={$this->txn}&RES={$result}&TRES={$tres}&AC={$this->ac}&AMT={$this->amt}&CURR={$this->curr}&CID={$cid}&CC={$this->cc}&AC={$this->ac}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
-        if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }

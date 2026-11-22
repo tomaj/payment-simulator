@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\CardPay;
 
-use Nette\Utils\Strings;
-use Omnipay\Core\Sign\DesSign;
+use App\Model\Sign\DesSign;
 
 class CardPayDESSign
 {
@@ -59,9 +58,9 @@ class CardPayDESSign
         $sign = $desSign->sign($base, $this->sharedSecret);
 
         $params = "VS={$this->vs}&AC={$this->ac}&RES={$result}&SIGN={$sign}";
-        if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }

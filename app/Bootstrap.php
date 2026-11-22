@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App;
 
-use Nette\Configurator;
+use Nette\Bootstrap\Configurator;
 
 class Bootstrap
 {
     public static function boot(): Configurator
     {
-        $configurator = new Configurator;
+        $configurator = new Configurator();
         $appDir = dirname(__DIR__);
 
-//        $configurator->setDebugMode(true);
+        //        $configurator->setDebugMode(true);
 
         $configurator->enableTracy($appDir . '/log');
 

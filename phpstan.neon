@@ -1,0 +1,13 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-nette/extension.neon
+    - vendor/phpstan/phpstan-nette/rules.neon
+
+parameters:
+    level: 5
+    paths:
+        - app
+        - www
+    checkUninitializedProperties: true
+    reportUnmatchedIgnoredErrors: true

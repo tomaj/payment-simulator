@@ -6,11 +6,7 @@ namespace App\Presenters;
 
 use Nette\Application\UI\Presenter;
 
-
 final class HomepagePresenter extends Presenter
 {
-    public function renderDefault()
-    {
-
-    }
+    public function renderDefault() {}
 }

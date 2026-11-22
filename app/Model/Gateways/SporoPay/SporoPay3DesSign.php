@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\SporoPay;
 
-use Nette\Utils\Strings;
 use Omnipay\SporoPay\Sign\Des3Sign;
 
 class SporoPay3DesSign
@@ -29,6 +28,12 @@ class SporoPay3DesSign
 
     private $param;
 
+    private $u_cislo;
+
+    private $u_predcislo;
+
+    private $u_kbanky;
+
     public function __construct($sharedSecret, $pu_predcislo, $pu_cislo, $pu_kbanky, $suma, $mena, $vs, $ss, $url, $param)
     {
         $this->sharedSecret = $sharedSecret;
@@ -48,7 +53,7 @@ class SporoPay3DesSign
 
     public function sign(): string
     {
-    	$base = "{$this->pu_predcislo};{$this->pu_cislo};{$this->pu_kbanky};{$this->suma};{$this->mena};{$this->vs};{$this->ss};{$this->url};{$this->param}";
+        $base = "{$this->pu_predcislo};{$this->pu_cislo};{$this->pu_kbanky};{$this->suma};{$this->mena};{$this->vs};{$this->ss};{$this->url};{$this->param}";
 
         $hmacSign = new Des3Sign();
 
@@ -61,10 +66,10 @@ class SporoPay3DesSign
         $hmacSign = new Des3Sign();
         $sign = $hmacSign->sign($data, $this->sharedSecret);
 
-        $params = "u_predcislo={$this->u_predcislo}&u_cislo={$this->u_cislo}&u_kbanky={$this->u_kbanky}&pu_predcislo={$this->pu_predcislo}&pu_cislo={$this->pu_cislo}&pu_kbanky={$this->pu_kbanky}&suma={$this->suma}&mena={$this->mena}&vs={$this->vs}&ss={$this->ss}&url=".rawurlencode($this->url)."&param=".rawurlencode($this->param)."&result={$result}&real={$result}&SIGN2=" . rawurlencode($sign);
-        if (Strings::contains($this->rurl, '?')) {
+        $params = "u_predcislo={$this->u_predcislo}&u_cislo={$this->u_cislo}&u_kbanky={$this->u_kbanky}&pu_predcislo={$this->pu_predcislo}&pu_cislo={$this->pu_cislo}&pu_kbanky={$this->pu_kbanky}&suma={$this->suma}&mena={$this->mena}&vs={$this->vs}&ss={$this->ss}&url=" . rawurlencode($this->url) . '&param=' . rawurlencode($this->param) . "&result={$result}&real={$result}&SIGN2=" . rawurlencode($sign);
+        if (str_contains($this->url, '?')) {
             return $this->url . '&' . $params;
         }
-        return $this->url . "?" . $params;
+        return $this->url . '?' . $params;
     }
 }

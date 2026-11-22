@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\TatraPay;
 
-use Nette\Utils\Strings;
 use Omnipay\Core\Sign\HmacSign;
 
 class TatraPayHmacSign
@@ -54,13 +53,13 @@ class TatraPayHmacSign
         $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->timestamp}";
 
         $hmacSign = new HmacSign();
-        
+
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
         $params = "VS={$this->vs}&RES={$result}&AMT={$this->amt}&CURR={$this->curr}&CS={$this->cs}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
-        if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }
