@@ -7,6 +7,12 @@ ENV RUN_DEPS git wget vim curl less gnupg unzip pv
 RUN apt-get update && apt-get install -y ${BUILD_DEPS} ${RUN_DEPS} --no-install-recommends \
     && docker-php-ext-install soap
 
+# OpenSSL legacy provider (single DES for the TatraPay / CardPay DES simulators)
+
+ADD openssl-legacy.cnf /usr/local/etc/openssl-legacy.cnf
+
+ENV OPENSSL_CONF=/usr/local/etc/openssl-legacy.cnf
+
 # OPCache
 
 RUN docker-php-ext-install opcache

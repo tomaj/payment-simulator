@@ -13,10 +13,14 @@
 - The AES and DES signatures use local copies of the omnipay-tatra 4.x signers (`App\Model\Sign`): the library
   versions call `openssl_random_pseudo_bytes(0)`, which throws on PHP 8.
 - DES signing throws a `RuntimeException` when OpenSSL cannot compute it (an empty signature was shown before).
+- The Docker image enables the OpenSSL legacy provider (`OPENSSL_CONF`), which single DES needs on OpenSSL 3.
 
 ### Fixed
 
 - SporoPay return URL: `SporoPay3DesSign::returnUrlSign()` read the undefined `$rurl` property and failed.
+- Missing optional `CS` / `REM` parameters no longer raise warnings (HTTP 500 in debug mode).
+- CardPay Direct API: a missing `Authorization` header returns 400 instead of a 500 `TypeError`; the HMAC signatures
+  (Direct API, CardPay cancel) are compared with `hash_equals()`.
 - Template parameter dumps are escaped (`{print_r($params, true)}` instead of a raw `{php print_r()}`).
 
 ### Added

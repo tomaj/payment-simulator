@@ -32,7 +32,7 @@ final class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new TatraPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $tatrapaySign = new TatraPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -55,7 +55,7 @@ final class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new TatraPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL']);
+        $tatrapaySign = new TatraPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -101,7 +101,7 @@ final class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new CardPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], '', $this->params['IPC'], $this->params['NAME']);
+        $tatrapaySign = new CardPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL'], '', $this->params['IPC'], $this->params['NAME']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -124,7 +124,7 @@ final class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $tatrapaySign = new CardPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], $this->params['IPC'], $this->params['NAME']);
+        $tatrapaySign = new CardPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL'], $this->params['IPC'], $this->params['NAME']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -147,7 +147,7 @@ final class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['HMAC'];
 
-        $tatrapaySign = new CardPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
+        $tatrapaySign = new CardPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'] ?? '', $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -170,7 +170,7 @@ final class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['HMAC'];
 
-        $tatrapaySign = new ComfortPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'], $this->params['TPAY'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
+        $tatrapaySign = new ComfortPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'] ?? '', $this->params['TPAY'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
         $computedSign = $tatrapaySign->sign();
 
         $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
@@ -193,7 +193,7 @@ final class PaymentPresenter extends Presenter
 
         $inputSign = $this->params['SIGN'];
 
-        $comfortpaySign = new ComfortPayAes256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'], $this->params['RURL'], $this->params['TPAY'], $this->params['IPC'], $this->params['NAME']);
+        $comfortpaySign = new ComfortPayAes256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL'], $this->params['TPAY'], $this->params['IPC'], $this->params['NAME']);
         $computedSign = $comfortpaySign->sign();
 
         $okReturnUrl = $comfortpaySign->returnUrlSign('OK');
@@ -222,7 +222,7 @@ final class PaymentPresenter extends Presenter
             $ss = $params['SS'];
         }
 
-        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $params['AMT'], $params['VS'], $params['CS'], $params['RURL'], $ss);
+        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $params['AMT'], $params['VS'], $params['CS'] ?? '', $params['RURL'], $ss);
         $computedSign = $eplatbySign->sign();
 
         $okReturnUrl = $eplatbySign->returnUrlSign('OK');
@@ -353,7 +353,8 @@ final class PaymentPresenter extends Presenter
         $input = "{$this->getParameter('MID')}{$this->getParameter('AMT')}{$this->getParameter('TID')}";
         $input .= "{$this->getParameter('VS')}{$this->getParameter('TXN')}{$this->getParameter('REM')}{$this->getParameter('TIMESTAMP')}";
 
-        if ($this->params['HMAC'] !== $hmacSign->sign($input, $sharedSecret)) {
+        $receivedHmac = $this->params['HMAC'] ?? null;
+        if (!is_string($receivedHmac) || !hash_equals($hmacSign->sign($input, $sharedSecret), $receivedHmac)) {
             $response = new CancelAuthorizationResponse($failXml, []);
             $this->sendResponse($response);
         }
@@ -379,8 +380,11 @@ final class PaymentPresenter extends Presenter
         $input = $body;
         $auth = $hmacSign->sign($input, $sharedSecret);
         $header = $this->getHttpRequest()->getHeader('Authorization');
-        $parts = explode('=', $header);
-        return $parts[1] === $auth;
+        if ($header === null) {
+            return false;
+        }
+        $parts = explode('=', $header, 2);
+        return isset($parts[1]) && hash_equals($auth, $parts[1]);
     }
 
     public function renderCardPayDirectPayPostTransaction(): void
