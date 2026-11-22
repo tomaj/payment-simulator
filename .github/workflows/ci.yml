@@ -219,6 +219,8 @@ jobs:
 
     - name: Serve the app with docker compose
       run: |
+        # PHP-FPM runs as www-data and writes the Nette cache and logs into the mounted checkout
+        chmod -R a+w temp log
         printf 'services:\n  nginx:\n    ports:\n      - "8080:80"\n' > docker-compose.override.yml
         docker compose up -d --build --wait
         curl --silent --show-error --fail --retry 20 --retry-delay 1 --retry-all-errors http://127.0.0.1:8080/ | grep -q 'Payment Simulator'
@@ -231,4 +233,6 @@ jobs:
 
     - name: Logs
       if: failure()
-      run: docker compose logs
+      run: |
+        docker compose logs
+        cat log/*.log || true

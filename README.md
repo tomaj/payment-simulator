@@ -30,7 +30,7 @@ docker compose up -d --build
 docker compose exec payment_simulator composer install
 ```
 
-Open http://localhost:8080/. The image (`docker/php/Dockerfile`, `php:8.4-fpm`) has `soap`, OPcache and Xdebug 3 (trigger mode: start a session with `XDEBUG_TRIGGER`; set `client_host` in `XDEBUG_CONFIG` in the override file) and enables the OpenSSL legacy provider (`docker/php/openssl-legacy.cnf`) that the DES gateways need. Other containers on the Compose network reach the simulator as `http://paymentsandbox.test`.
+Open http://localhost:8080/. On Linux, PHP-FPM runs as `www-data` and needs to write to the mounted `temp/` and `log/` directories: `chmod -R a+w temp log`. The image (`docker/php/Dockerfile`, `php:8.4-fpm`) has `soap`, OPcache and Xdebug 3 (trigger mode: start a session with `XDEBUG_TRIGGER`; set `client_host` in `XDEBUG_CONFIG` in the override file) and enables the OpenSSL legacy provider (`docker/php/openssl-legacy.cnf`) that the DES gateways need. Other containers on the Compose network reach the simulator as `http://paymentsandbox.test`.
 
 ### Local PHP
 
