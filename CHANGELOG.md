@@ -30,5 +30,6 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - `LICENSE.md` (MIT); `composer.json` declares `MIT` instead of the four licences of the Nette sandbox skeleton the project started from. `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `RELEASING.md`, issue forms and a pull request template ([#17](https://github.com/tomaj/payment-simulator/issues/17)).
 - GitHub Actions CI (PHP 8.3 - 8.6, nightly 8.7): PHP and Latte lint, DI container boot, PHP-CS-Fixer (PER-CS),
   PHPStan level 5 with strict rules, `composer audit`, Dependabot ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
+- CI at the shared baseline: tests on PHP 8.4, 8.5, 8.6 (coverage with a 90% threshold on 8.6) and nightly 8.7, all with the OpenSSL legacy provider so the DES tests cannot skip; Rector; a Docker job that builds the image, checks its extensions and single DES, starts the stack with `docker compose` and verifies a DES page; CodeQL, OpenSSF Scorecard and a tag-driven release workflow ([#18](https://github.com/tomaj/payment-simulator/issues/18), [#27](https://github.com/tomaj/payment-simulator/issues/27)).
 
 [unreleased]: https://github.com/tomaj/payment-simulator/commits/master

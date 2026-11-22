@@ -9,27 +9,37 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint:
-    name: Lint PHP ${{ matrix.php }}
+  tests:
+    name: PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # PHP 8.7 is a nightly build: it runs to show problems early but does not fail the workflow
     continue-on-error: ${{ matrix.php == '8.7' }}
+    env:
+      # single DES (TatraPay/CardPay DES) needs the OpenSSL 3 legacy provider, as in the Docker image
+      OPENSSL_CONF: ${{ github.workspace }}/docker/php/openssl-legacy.cnf
 
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.3', '8.4', '8.5', '8.6', '8.7']
+        php: ['8.4', '8.5', '8.6', '8.7']
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Setup PHP
       uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122 # main after 2.40.0 (PHP 8.6 stable)
       with:
         php-version: ${{ matrix.php }}
-        extensions: mbstring, openssl
-        coverage: none
+        extensions: mbstring, xml, openssl
+        coverage: ${{ matrix.php == '8.6' && 'xdebug' || 'none' }}
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -38,35 +48,75 @@ jobs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: vendor
-        key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-${{ matrix.php }}-
 
     - name: Install dependencies
-      # an application: install the locked versions; they cap their PHP version, so the nightly ignores the upper bound
+      # an application: the locked versions; they cap their PHP version, so the nightly ignores the upper bound
       run: composer install ${{ matrix.php == '8.7' && '--ignore-platform-req=php+' || '' }} --prefer-dist --no-progress --no-interaction
-
-    - name: Lint PHP files
-      # the application has no test suite; make sure every file at least compiles
-      run: find app www -name '*.php' -print0 | xargs -0 -n1 php -l
 
     - name: Lint Latte templates
       run: vendor/bin/latte-lint app
 
-    - name: Boot the DI container
-      run: php -r 'require "vendor/autoload.php"; App\Bootstrap::boot()->createContainer();'
+    - name: Require single DES
+      run: php -r 'exit(openssl_encrypt("x", "des-ecb", "12345678", OPENSSL_RAW_DATA) === false ? 1 : 0);'
+
+    - name: Run tests
+      if: matrix.php != '8.6'
+      run: vendor/bin/phpunit --no-coverage --fail-on-skipped
+
+    - name: Run tests with coverage
+      if: matrix.php == '8.6'
+      run: XDEBUG_MODE=coverage vendor/bin/phpunit --fail-on-skipped --coverage-clover build/logs/clover.xml --coverage-html build/coverage
+
+    - name: Require 90% statement coverage
+      if: matrix.php == '8.6'
+      run: |
+        php -r '
+          $xml = simplexml_load_file("build/logs/clover.xml");
+          $metrics = $xml->project->metrics;
+          $statements = (int) $metrics["statements"];
+          $covered = (int) $metrics["coveredstatements"];
+          $percent = $statements === 0 ? 0 : ($covered / $statements) * 100;
+          echo sprintf("Statements: %d/%d (%.2f%%)\n", $covered, $statements, $percent);
+          if ($percent < 90) {
+              fwrite(STDERR, "Statement coverage is below 90%.\n");
+              exit(1);
+          }
+        '
+
+    - name: Upload coverage to Coveralls
+      if: matrix.php == '8.6'
+      uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2.3.8
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        file: build/logs/clover.xml
+        format: clover
+        fail-on-error: false
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.php == '8.6'
+      with:
+        name: coverage-report
+        path: build/coverage
 
   code-style:
-    name: Code Style (PER-CS + PHP 8.3)
+    name: Code Style (PER-CS/PSR-12 + PHP 8.4)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Setup PHP
       uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122 # main after 2.40.0 (PHP 8.6 stable)
       with:
-        php-version: '8.3'
+        php-version: '8.4'
+        extensions: mbstring, xml, openssl
         coverage: none
 
     - name: Install dependencies
@@ -76,16 +126,20 @@ jobs:
       run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
 
   static-analysis:
-    name: Static Analysis (PHPStan level 5)
+    name: Static Analysis (PHPStan level max)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Setup PHP
       uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122 # main after 2.40.0 (PHP 8.6 stable)
       with:
-        php-version: '8.3'
+        php-version: '8.4'
+        extensions: mbstring, xml, openssl
         coverage: none
 
     - name: Install dependencies
@@ -94,17 +148,44 @@ jobs:
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse --memory-limit=1G
 
-  security:
-    name: Security Audit
+  rector:
+    name: Rector
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Setup PHP
       uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122 # main after 2.40.0 (PHP 8.6 stable)
       with:
-        php-version: '8.3'
+        php-version: '8.4'
+        extensions: mbstring, xml, openssl
+        coverage: none
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-interaction
+
+    - name: Run Rector
+      run: vendor/bin/rector --dry-run --no-progress-bar
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@e8d43d139fbfbe401c32ef3a3a32e14075f20122 # main after 2.40.0 (PHP 8.6 stable)
+      with:
+        php-version: '8.4'
+        extensions: mbstring, xml, openssl
         coverage: none
 
     - name: Install dependencies
@@ -112,3 +193,41 @@ jobs:
 
     - name: Run security audit
       run: composer audit
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+
+    - name: Build the PHP image
+      run: docker build --pull -t payment-simulator-php docker/php
+
+    - name: Check extensions and single DES in the image
+      run: |
+        docker run --rm payment-simulator-php php -m | grep -x -e soap -e 'Zend OPcache' -e xdebug | sort -u | tee /tmp/modules.txt
+        test "$(wc -l < /tmp/modules.txt)" -eq 3
+        docker run --rm payment-simulator-php php -r 'exit(openssl_encrypt("x", "des-ecb", "12345678", OPENSSL_RAW_DATA) === false ? 1 : 0);'
+
+    - name: Install dependencies in the image
+      run: docker run --rm -v "$PWD:/var/www/html" -w /var/www/html payment-simulator-php composer install --no-dev --prefer-dist --no-progress --no-interaction
+
+    - name: Serve the app with docker compose
+      run: |
+        printf 'services:\n  nginx:\n    ports:\n      - "8080:80"\n' > docker-compose.override.yml
+        docker compose up -d --build --wait
+        curl --silent --show-error --fail --retry 20 --retry-delay 1 --retry-all-errors http://127.0.0.1:8080/ | grep -q 'Payment Simulator'
+
+    - name: A DES page verifies a signature in the stack
+      run: |
+        # SIGN of 9999 10.50 978 1 https://shop.example/r with the DES test key, computed with the openssl CLI
+        sign=$(printf '%s' '999910.509781https://shop.example/r' | openssl dgst -sha1 -binary | head -c 8 | openssl enc -des-ecb -K 3131313131313131 -nopad -provider legacy -provider default | xxd -p -u)
+        curl --silent --show-error --fail "http://127.0.0.1:8080/payment/tatrapay-des?MID=9999&AMT=10.50&CURR=978&VS=1&RURL=https%3A%2F%2Fshop.example%2Fr&SIGN=${sign}" | tee /tmp/des.html | grep -q 'Sign OK'
+
+    - name: Logs
+      if: failure()
+      run: docker compose logs
