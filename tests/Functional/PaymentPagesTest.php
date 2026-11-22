@@ -121,6 +121,36 @@ final class PaymentPagesTest extends AppTestCase
         self::assertSame($required, $m[1]);
     }
 
+    /**
+     * #26: the specific symbol is part of the TatraPay and VÚB signatures; signatures from the openssl CLI
+     * (see Tests\Model\GatewaySignTest).
+     *
+     * @return iterable<string, array{string, string, array<string, string>, string}>
+     */
+    public static function specificSymbol(): iterable
+    {
+        $tatra = ['MID' => '9999', 'AMT' => '10.50', 'CURR' => '978', 'VS' => '1234567890', 'SS' => '77', 'CS' => '0308', 'RURL' => self::RURL];
+
+        yield 'TatraPay AES' => ['/payment/tatrapay-aes256', 'GET', $tatra + ['SIGN' => '5C15143CA563C10471B0A23C652DD80F'], '&SS=77&'];
+        yield 'TatraPay HMAC' => ['/payment/tatrapay-hmac', 'GET', $tatra + ['REM' => 'a@b.sk', 'TIMESTAMP' => '01012026101010', 'HMAC' => '16d7ac5df8ce67dc947a5047af91ab3b4fcdf55a79d440276328b98c6e6c9a48'], '&SS=77&'];
+        yield 'VUB ePlatby' => ['/payment/eplatby-hmac', 'POST', ['MID' => '9999', 'AMT' => '10.50', 'VS' => '1234567890', 'SS' => '77', 'CS' => '0308', 'RURL' => self::RURL, 'SIGN' => '173C182CB6392A8264F8AABC33E2D1D161E2545E4F729E115099BD0212BD682C'], '&SS=77&'];
+    }
+
+    /**
+     * @param array<string, string> $params
+     */
+    #[DataProvider('specificSymbol')]
+    public function testSpecificSymbolIsSigned(string $path, string $method, array $params, string $returned): void
+    {
+        $result = $this->send($path, $method, $params);
+
+        self::assertStringContainsString('Sign OK', $result->body);
+        self::assertStringContainsString($returned, (string) $result->link('continue ok'));
+
+        unset($params['SS']);
+        self::assertStringContainsString('Wrong sign', $this->send($path, $method, $params)->body);
+    }
+
     public function testArrayParameterCountsAsMissing(): void
     {
         $result = $this->get('/payment/tatrapay-aes256', ['MID' => ['9999'], 'AMT' => '1', 'CURR' => '978', 'VS' => '1', 'RURL' => self::RURL, 'SIGN' => 'x']);

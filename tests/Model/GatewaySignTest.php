@@ -69,6 +69,29 @@ final class GatewaySignTest extends TestCase
             'OK', // base 10.50 978 1234567890 0308 OK TIMESTAMP
             "{$r}&VS=1234567890&RES=OK&AMT=10.50&CURR=978&CS=0308&TIMESTAMP={$ts}&HMAC=98f1c669e7c18f1ee98d2d2fc1cf89be3d55a9cb311d9adb27dfd56d86433ee1",
         ];
+        // with a specific symbol (#26): base 9999 10.50 978 1234567890 77 0308 RURL
+        yield 'TatraPay AES with SS' => [
+            static fn(): GatewaySign => new TatraPayAES256Sign(PaymentPresenter::AES_KEY, '9999', '10.50', '978', '1234567890', '0308', $r, '77'),
+            false,
+            '5C15143CA563C10471B0A23C652DD80F',
+            'OK', // base 1234567890 OK
+            "{$r}&VS=1234567890&SS=77&RES=OK&SIGN=2BC858513AF8471E9F64B3C614D858EE",
+        ];
+        yield 'TatraPay DES with SS' => [
+            static fn(): GatewaySign => new TatraPayDESSign(PaymentPresenter::DES_KEY, '9999', '10.50', '978', '1234567890', '0308', $r, '77'),
+            true,
+            '15D4DD86A987BC0C',
+            'FAIL', // base 1234567890 FAIL
+            "{$r}&VS=1234567890&SS=77&RES=FAIL&SIGN=424F7BF262BAAA25",
+        ];
+        // base 9999 10.50 978 1234567890 77 0308 RURL a@b.sk TIMESTAMP
+        yield 'TatraPay HMAC with SS' => [
+            static fn(): GatewaySign => new TatraPayHmacSign(PaymentPresenter::HMAC_KEY, '9999', '10.50', '978', '1234567890', '0308', $r, 'a@b.sk', $ts, '77'),
+            false,
+            '16d7ac5df8ce67dc947a5047af91ab3b4fcdf55a79d440276328b98c6e6c9a48',
+            'OK', // base 10.50 978 1234567890 77 0308 OK TIMESTAMP
+            "{$r}&VS=1234567890&SS=77&RES=OK&AMT=10.50&CURR=978&CS=0308&TIMESTAMP={$ts}&HMAC=2727db713096e4860347e8885908e25330134a5339d3c7f68b730220a5d90f25",
+        ];
         // base 9999 10.50 978 1234567890 0308 RURL 1.2.3.4 Jan
         yield 'CardPay AES' => [
             static fn(): GatewaySign => new CardPayAES256Sign(PaymentPresenter::AES_KEY, '9999', '10.50', '978', '1234567890', '0308', $r, '', '1.2.3.4', 'Jan'),
@@ -129,6 +152,14 @@ final class GatewaySignTest extends TestCase
             '0E1A93FA39AC3985979DD1FA6614A558C73128CE0FF3F9C37BE98EB52DB4B2E2',
             'OK', // base 1234567890 OK
             "{$r}&VS=1234567890&RES=OK&SIGN=4D96F6255476F740F3DCC1B9D10650C7A25004DB048C058E46552E11839430E6",
+        ];
+        // base 9999 10.50 1234567890 77 0308 RURL (VÚB: SS between VS and CS)
+        yield 'VUB ePlatby with SS' => [
+            static fn(): GatewaySign => new VubEplatbyHmacSign(PaymentPresenter::EPLATBY_KEY, '9999', '10.50', '1234567890', '0308', $r, '77'),
+            false,
+            '173C182CB6392A8264F8AABC33E2D1D161E2545E4F729E115099BD0212BD682C',
+            'OK', // base 1234567890 77 OK
+            "{$r}&VS=1234567890&SS=77&RES=OK&SIGN=FDC064A7342AF92A5CBA60BAD027BA72F39EB440200B967E5899328DC21AEA27",
         ];
         // base 000000;0013662162;0900;10.50;EUR;1234567890;77;RURL;abc=1
         yield 'SporoPay' => [

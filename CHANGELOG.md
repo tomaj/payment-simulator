@@ -24,6 +24,11 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Fixed
 
+- Specific symbol (`SS`) ([#26](https://github.com/tomaj/payment-simulator/issues/26)):
+  - TatraPay (AES, DES, HMAC) reads the optional `SS` and signs `MID AMT CURR VS SS CS RURL` (HMAC: `… REM TIMESTAMP`), the order `tomaj/omnipay-tatra` has used against Tatra banka in production (the TatraPay specification is not public); the HMAC return URL is signed over `AMT CURR VS SS CS RES TID TIMESTAMP` and carries `SS`. A request with `SS` showed "Wrong sign" before.
+  - VÚB ePlatby signs `MID AMT VS SS CS RURL` (SS between VS and CS, the order VÚB confirmed, see tomaj/omnipay-vub#2; it was `… CS SS …`) and the return URL over `VS SS RES`, with `SS` in the return URL.
+  - Without `SS` every signature is unchanged.
+
 - The signature check on every payment page uses `hash_equals()` in the presenter instead of `==` in the templates, which treated two different numeric-looking signatures (`0E…` digits) as equal ([#21](https://github.com/tomaj/payment-simulator/issues/21)).
 - A request without a required parameter shows "Missing parameters" with the list of names (HTTP 400) instead of an undefined-index error ([#21](https://github.com/tomaj/payment-simulator/issues/21)).
 - CardPay Direct API: a body without a numeric `amount` returns 400; `tdsTermUrl` is HTML-escaped in the 3-D Secure form; the CardPay cancel XML escapes the echoed parameters ([#21](https://github.com/tomaj/payment-simulator/issues/21)).

@@ -49,6 +49,7 @@ final class PaymentPresenter extends Presenter
             $p->required('VS'),
             $p->optional('CS'),
             $p->required('RURL'),
+            $p->optional('SS'),
         ));
     }
 
@@ -62,6 +63,7 @@ final class PaymentPresenter extends Presenter
             $p->required('VS'),
             $p->optional('CS'),
             $p->required('RURL'),
+            $p->optional('SS'),
         ));
     }
 
@@ -77,6 +79,7 @@ final class PaymentPresenter extends Presenter
             $p->required('RURL'),
             $p->optional('REM'),
             $p->required('TIMESTAMP'),
+            $p->optional('SS'),
         ));
     }
 
