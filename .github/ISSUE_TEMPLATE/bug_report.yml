@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a simulator page or signature that behaves differently from the bank
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+
+        If this is a security vulnerability, do not continue. Report it privately at https://github.com/tomaj/payment-simulator/security/advisories/new (see SECURITY.md).
+
+  - type: dropdown
+    id: gateway
+    attributes:
+      label: Gateway
+      options:
+        - TatraPay
+        - CardPay
+        - CardPay Direct API
+        - ComfortPay
+        - VUB ePlatby
+        - SLSP SporoPay
+        - Other / not gateway-specific
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: What went wrong? For "Wrong sign", include the request parameters (they are test data) and the expected signature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Build the request with tomaj/omnipay-tatra 4.3.0 and ...
+        2. Open the simulator URL ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What does the real bank do? Link the specification if you can.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Simulator version or commit
+      placeholder: "1.0.0 / https://platby.tomaj.sk/"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and this is not a duplicate
+          required: true
+        - label: This is not a security vulnerability
+          required: true
