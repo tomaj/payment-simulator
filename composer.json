@@ -30,7 +30,7 @@
 		"security": "https://github.com/tomaj/payment-simulator/security/policy"
 	},
 	"require": {
-		"php": "^8.3",
+		"php": "^8.4",
 		"ext-openssl": "*",
 		"latte/latte": "^3.0",
 		"moneyphp/money": "^3.3.3",
@@ -49,10 +49,14 @@
 		"tracy/tracy": "^2.10"
 	},
 	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^3.75",
-		"phpstan/phpstan": "^2.1",
+		"friendsofphp/php-cs-fixer": "^3.95",
+		"phpstan/phpstan": "^2.3",
+		"phpstan/phpstan-deprecation-rules": "^2.0",
 		"phpstan/phpstan-nette": "^2.0",
-		"phpstan/phpstan-strict-rules": "^2.0"
+		"phpstan/phpstan-phpunit": "^2.0.5",
+		"phpstan/phpstan-strict-rules": "^2.0",
+		"phpunit/phpunit": "^13.2",
+		"rector/rector": "^2.8"
 	},
 	"minimum-stability": "stable",
 	"autoload": {
@@ -60,9 +64,14 @@
 			"App\\": "app"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"App\\Tests\\": "tests"
+		}
+	},
 	"config": {
 		"platform": {
-			"php": "8.3.0"
+			"php": "8.4.1"
 		},
 		"sort-packages": true,
 		"allow-plugins": {
@@ -73,11 +82,35 @@
 		"check": [
 			"@phpcs",
 			"@phpstan",
-			"@lint"
+			"@rector",
+			"@test"
+		],
+		"coverage": [
+			"@putenv XDEBUG_MODE=coverage",
+			"phpunit --coverage-clover build/logs/clover.xml --coverage-html build/coverage"
 		],
 		"cs-fix": "php-cs-fixer fix",
 		"lint": "find app www -name '*.php' -print0 | xargs -0 -n1 php -l",
 		"phpcs": "php-cs-fixer fix --dry-run --diff --verbose",
-		"phpstan": "phpstan analyse --memory-limit=1G"
+		"phpstan": "phpstan analyse --memory-limit=1G",
+		"phpunit": [
+			"@putenv XDEBUG_MODE=off",
+			"phpunit --no-coverage"
+		],
+		"rector": "rector --dry-run",
+		"rector-fix": "rector",
+		"test": "@phpunit"
+	},
+	"scripts-descriptions": {
+		"check": "Run code style, static analysis, Rector and tests",
+		"coverage": "Run the tests with Clover and HTML coverage reports in build/",
+		"cs-fix": "Fix the code style with PHP-CS-Fixer",
+		"lint": "Check that every PHP file in app/ and www/ compiles",
+		"phpcs": "Check the code style with PHP-CS-Fixer (dry run)",
+		"phpstan": "Run PHPStan static analysis",
+		"phpunit": "Run the PHPUnit tests without coverage",
+		"rector": "Show the changes Rector would make (dry run)",
+		"rector-fix": "Apply the Rector changes",
+		"test": "Run the test suite"
 	}
 }

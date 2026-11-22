@@ -6,6 +6,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Changed
 
+- **BREAKING CHANGE**: Requires PHP 8.4 (`config.platform.php` 8.4.1, which PHPUnit 13 needs); the Docker image is based on `php:8.4-fpm`. Rebuild the image (`docker compose build`) ([#20](https://github.com/tomaj/payment-simulator/issues/20)).
+- Dependencies updated within their constraints (`composer update`), among them `nette/neon` 4 and Symfony 8 components.
+- Docker: Xdebug 3 settings (`xdebug.mode=debug`, trigger mode, port 9003; set `client_host` through `XDEBUG_CONFIG`), the removed `opcache.fast_shutdown` dropped, the obsolete `version:` key dropped from the compose files ([#27](https://github.com/tomaj/payment-simulator/issues/27)).
+- PHPStan level max with the deprecation and PHPUnit rules, Rector, and the baseline composer scripts (`test`, `coverage`, `rector`, …) with descriptions ([#19](https://github.com/tomaj/payment-simulator/issues/19)).
 - Requires PHP 8.3 - 8.6 (was PHP >= 7.2); the Docker image is based on `php:8.3-fpm` ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
 - Nette 3.2+/3.3 (application, bootstrap, forms, http, security, di), nette/utils 4, nette/robot-loader 4,
   Latte 3, Tracy 2.12, Guzzle 7 (`php-http/guzzle7-adapter` instead of `php-http/guzzle6-adapter`) ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
