@@ -4,70 +4,46 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\ComfortPay;
 
+use App\Model\Gateways\GatewaySign;
+use App\Model\Gateways\ReturnUrl;
 use App\Model\Sign\Aes256Sign;
 
-class ComfortPayAes256Sign
+final readonly class ComfortPayAes256Sign implements GatewaySign
 {
-    private $sharedSecret;
+    /** Approval code the simulator returns */
+    private const string AC = '111111';
 
-    private $mid;
+    /** Card id the simulator returns */
+    private const string CID = '111111';
 
-    private $amt;
+    public function __construct(
+        private string $sharedSecret,
+        private string $mid,
+        private string $amt,
+        private string $curr,
+        private string $vs,
+        private string $cs,
+        private string $rurl,
+        private string $tpay,
+        private string $ipc = '',
+        private string $name = '',
+    ) {}
 
-    private $curr;
-
-    private $vs;
-
-    private $cs;
-
-    private $rurl;
-
-    private $ipc;
-
-    private $name;
-
-    private $tpay;
-
-    private $ac;
-
-    private $cid;
-
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $tpay, $ipc = '', $name = '')
-    {
-        $this->sharedSecret = $sharedSecret;
-        $this->mid = $mid;
-        $this->amt = $amt;
-        $this->curr = $curr;
-        $this->vs = $vs;
-        $this->cs = $cs;
-        $this->rurl = $rurl;
-        $this->tpay = $tpay;
-        $this->ipc = $ipc;
-        $this->name = $name;
-        $this->ac = 111111;
-        $this->cid = 111111;
-    }
-
+    #[\Override]
     public function sign(): string
     {
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}{$this->tpay}";
 
-        $sign = new Aes256Sign();
-
-        return $sign->sign($base, $this->sharedSecret);
+        return new Aes256Sign()->sign($base, $this->sharedSecret);
     }
 
+    #[\Override]
     public function returnUrlSign(string $result): string
     {
-        $base = "{$this->vs}{$result}{$this->ac}{$this->cid}";
+        $ac = self::AC;
+        $cid = self::CID;
+        $sign = new Aes256Sign()->sign("{$this->vs}{$result}{$ac}{$cid}", $this->sharedSecret);
 
-        $sign = new Aes256Sign();
-        $sign = $sign->sign($base, $this->sharedSecret);
-
-        $params = "VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&SIGN=" . $sign;
-        if (str_contains($this->rurl, '?')) {
-            return $this->rurl . '&' . $params;
-        }
-        return $this->rurl . '?' . $params;
+        return ReturnUrl::append($this->rurl, "VS={$this->vs}&RES={$result}&TRES={$result}&AC={$ac}&CID={$cid}&SIGN={$sign}");
     }
 }

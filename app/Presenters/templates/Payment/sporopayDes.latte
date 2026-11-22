@@ -12,7 +12,7 @@
 </div>
 
 <div>
-    {if $inputSign == $computedSign}
+    {if $signValid}
         <p class="text-success">Sign OK</p>
         <a href="{$okReturnUrl}" class="btn btn-primary">continue ok</a>
         <a href="{$failReturnUrl}" class="btn btn-danger">continue fail</a>

@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace App\Model\Responses;
 
-use Nette;
+use Nette\Application\Response;
+use Nette\Http\IRequest;
+use Nette\Http\IResponse;
 
-class CancelAuthorizationResponse implements Nette\Application\Response
+/**
+ * The XML answer of the CardPay cancel (void) request.
+ */
+final readonly class CancelAuthorizationResponse implements Response
 {
-    private $xml;
+    /**
+     * @param array<string, string> $headers
+     */
+    public function __construct(
+        private string $xml,
+        private array $headers,
+    ) {}
 
-    private $headers;
-
-    public function __construct(string $xml, array $headers)
-    {
-        $this->xml = $xml;
-        $this->headers = $headers;
-    }
-
-    public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse): void
+    #[\Override]
+    public function send(IRequest $httpRequest, IResponse $httpResponse): void
     {
         foreach ($this->headers as $name => $value) {
             $httpResponse->addHeader($name, $value);

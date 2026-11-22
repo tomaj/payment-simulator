@@ -4,68 +4,45 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\CardPay;
 
-use Omnipay\Core\Sign\HmacSign;
+use App\Model\Gateways\GatewaySign;
+use App\Model\Gateways\ReturnUrl;
+use App\Model\Sign\LibrarySign;
 
-class CardPayHmacSign
+final readonly class CardPayHmacSign implements GatewaySign
 {
-    private $sharedSecret;
+    /** Approval code the simulator returns */
+    private const string AC = '111111';
 
-    private $mid;
+    /** Masked card number the simulator returns */
+    private const string CC = '1111********1111';
 
-    private $amt;
+    /** Card id returned for a successful card registration (TPAY=Y) */
+    private const string CID = '123456';
 
-    private $curr;
+    public function __construct(
+        private string $sharedSecret,
+        private string $mid,
+        private string $amt,
+        private string $curr,
+        private string $vs,
+        private string $rurl,
+        private string $rem,
+        private string $timestamp,
+        private string $ipc = '',
+        private string $name = '',
+        private string $txn = '',
+        private string $tpay = '',
+    ) {}
 
-    private $vs;
-
-    private $rurl;
-
-    private $rem;
-
-    private $ipc;
-
-    private $name;
-
-    private $timestamp;
-
-    private $tid;
-
-    private $cc;
-
-    private $txn;
-
-    private $ac;
-
-    private $tpay;
-
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $rurl, $rem, $timestamp, $ipc = '', $name = '', $txn = '', $tpay = '')
-    {
-        $this->sharedSecret = $sharedSecret;
-        $this->mid = $mid;
-        $this->amt = $amt;
-        $this->curr = $curr;
-        $this->vs = $vs;
-        $this->rurl = $rurl;
-        $this->rem = $rem;
-        $this->ipc = $ipc;
-        $this->name = $name;
-        $this->timestamp = $timestamp;
-        $this->ac = 111111;
-        $this->tid = '';
-        $this->cc = '1111********1111';
-        $this->txn = $txn;
-        $this->tpay = $tpay;
-    }
-
+    #[\Override]
     public function sign(): string
     {
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->txn}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->tpay}{$this->timestamp}";
 
-        $hmacSign = new HmacSign();
-
-        return $hmacSign->sign($base, $this->sharedSecret);
+        return LibrarySign::tatraHmac($base, $this->sharedSecret);
     }
 
+    #[\Override]
     public function returnUrlSign(string $result): string
     {
         $cid = '';
@@ -73,18 +50,15 @@ class CardPayHmacSign
         if ($this->tpay === 'Y') {
             $tres = $result;
             if ($result === 'OK') {
-                $cid = 123456;
+                $cid = self::CID;
             }
         }
-        $base = "{$this->amt}{$this->curr}{$this->vs}{$this->txn}{$result}{$this->ac}{$tres}{$cid}{$this->cc}{$this->tid}{$this->timestamp}";
+        $ac = self::AC;
+        $cc = self::CC;
+        $tid = '';
+        $base = "{$this->amt}{$this->curr}{$this->vs}{$this->txn}{$result}{$ac}{$tres}{$cid}{$cc}{$tid}{$this->timestamp}";
+        $sign = LibrarySign::tatraHmac($base, $this->sharedSecret);
 
-        $hmacSign = new HmacSign();
-        $sign = $hmacSign->sign($base, $this->sharedSecret);
-
-        $params = "VS={$this->vs}&TXN={$this->txn}&RES={$result}&TRES={$tres}&AC={$this->ac}&AMT={$this->amt}&CURR={$this->curr}&CID={$cid}&CC={$this->cc}&AC={$this->ac}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
-        if (str_contains($this->rurl, '?')) {
-            return $this->rurl . '&' . $params;
-        }
-        return $this->rurl . '?' . $params;
+        return ReturnUrl::append($this->rurl, "VS={$this->vs}&TXN={$this->txn}&RES={$result}&TRES={$tres}&AC={$ac}&AMT={$this->amt}&CURR={$this->curr}&CID={$cid}&CC={$cc}&AC={$ac}&TIMESTAMP={$this->timestamp}&HMAC={$sign}");
     }
 }

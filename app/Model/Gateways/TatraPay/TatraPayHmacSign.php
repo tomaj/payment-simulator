@@ -4,62 +4,38 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\TatraPay;
 
-use Omnipay\Core\Sign\HmacSign;
+use App\Model\Gateways\GatewaySign;
+use App\Model\Gateways\ReturnUrl;
+use App\Model\Sign\LibrarySign;
 
-class TatraPayHmacSign
+final readonly class TatraPayHmacSign implements GatewaySign
 {
-    private $sharedSecret;
+    public function __construct(
+        private string $sharedSecret,
+        private string $mid,
+        private string $amt,
+        private string $curr,
+        private string $vs,
+        private string $cs,
+        private string $rurl,
+        private string $rem,
+        private string $timestamp,
+    ) {}
 
-    private $mid;
-
-    private $amt;
-
-    private $curr;
-
-    private $vs;
-
-    private $cs;
-
-    private $rurl;
-
-    private $rem;
-
-    private $timestamp;
-
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $rem, $timestamp)
-    {
-        $this->sharedSecret = $sharedSecret;
-        $this->mid = $mid;
-        $this->amt = $amt;
-        $this->curr = $curr;
-        $this->vs = $vs;
-        $this->cs = $cs;
-        $this->rurl = $rurl;
-        $this->rem = $rem;
-        $this->timestamp = $timestamp;
-    }
-
+    #[\Override]
     public function sign(): string
     {
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->rem}{$this->timestamp}";
 
-        $hmacSign = new HmacSign();
-
-        return $hmacSign->sign($base, $this->sharedSecret);
+        return LibrarySign::tatraHmac($base, $this->sharedSecret);
     }
 
+    #[\Override]
     public function returnUrlSign(string $result): string
     {
         $base = "{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$result}{$this->timestamp}";
+        $sign = LibrarySign::tatraHmac($base, $this->sharedSecret);
 
-        $hmacSign = new HmacSign();
-
-        $sign = $hmacSign->sign($base, $this->sharedSecret);
-
-        $params = "VS={$this->vs}&RES={$result}&AMT={$this->amt}&CURR={$this->curr}&CS={$this->cs}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
-        if (str_contains($this->rurl, '?')) {
-            return $this->rurl . '&' . $params;
-        }
-        return $this->rurl . '?' . $params;
+        return ReturnUrl::append($this->rurl, "VS={$this->vs}&RES={$result}&AMT={$this->amt}&CURR={$this->curr}&CS={$this->cs}&TIMESTAMP={$this->timestamp}&HMAC={$sign}");
     }
 }

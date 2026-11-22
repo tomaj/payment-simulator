@@ -1,0 +1,14 @@
+{block content}
+
+<h1>Missing parameters</h1>
+
+<div>
+    <p class="text-danger">The request is missing required parameters:</p>
+    <ul>
+        <li n:foreach="$missingParameters as $name"><code>{$name}</code></li>
+    </ul>
+    <div>
+        <h4>Params:</h4>
+        <pre>{print_r($params, true)}</pre>
+    </div>
+</div>

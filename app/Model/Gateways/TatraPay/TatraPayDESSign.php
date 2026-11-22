@@ -4,55 +4,33 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\TatraPay;
 
+use App\Model\Gateways\GatewaySign;
+use App\Model\Gateways\ReturnUrl;
 use App\Model\Sign\DesSign;
 
-class TatraPayDESSign
+final readonly class TatraPayDESSign implements GatewaySign
 {
-    private $sharedSecret;
+    public function __construct(
+        private string $sharedSecret,
+        private string $mid,
+        private string $amt,
+        private string $curr,
+        private string $vs,
+        private string $cs,
+        private string $rurl,
+    ) {}
 
-    private $mid;
-
-    private $amt;
-
-    private $curr;
-
-    private $vs;
-
-    private $cs;
-
-    private $rurl;
-
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl)
-    {
-        $this->sharedSecret = $sharedSecret;
-        $this->mid = $mid;
-        $this->amt = $amt;
-        $this->curr = $curr;
-        $this->vs = $vs;
-        $this->cs = $cs;
-        $this->rurl = $rurl;
-    }
-
+    #[\Override]
     public function sign(): string
     {
-        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}";
-
-        $desSign = new DesSign();
-
-        return $desSign->sign($base, $this->sharedSecret);
+        return new DesSign()->sign("{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}", $this->sharedSecret);
     }
 
+    #[\Override]
     public function returnUrlSign(string $result): string
     {
-        $base = "{$this->vs}{$result}";
+        $sign = new DesSign()->sign("{$this->vs}{$result}", $this->sharedSecret);
 
-        $desSign = new DesSign();
-        $sign = $desSign->sign($base, $this->sharedSecret);
-
-        $params = "VS={$this->vs}&RES={$result}&SIGN={$sign}";
-        if (str_contains($this->rurl, '?')) {
-            return $this->rurl . '&' . $params;
-        }
-        return $this->rurl . '?' . $params;
+        return ReturnUrl::append($this->rurl, "VS={$this->vs}&RES={$result}&SIGN={$sign}");
     }
 }

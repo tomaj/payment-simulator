@@ -11,318 +11,237 @@ use App\Model\Gateways\CardPay\CardPayHmacSign;
 use App\Model\Gateways\ComfortPay\ComfortPayAes256Sign;
 use App\Model\Gateways\ComfortPay\ComfortPayHmacSign;
 use App\Model\Gateways\Eplatby\VubEplatbyHmacSign;
+use App\Model\Gateways\GatewaySign;
 use App\Model\Gateways\SporoPay\SporoPay3DesSign;
 use App\Model\Gateways\TatraPay\TatraPayAES256Sign;
 use App\Model\Gateways\TatraPay\TatraPayDESSign;
 use App\Model\Gateways\TatraPay\TatraPayHmacSign;
+use App\Model\RequestParameters;
 use App\Model\Responses\CancelAuthorizationResponse;
+use App\Model\Sign\LibrarySign;
 use Nette\Application\Responses\JsonResponse;
 use Nette\Application\UI\Presenter;
+use Nette\Http\IResponse;
 use Nette\Utils\Json;
 use Nette\Utils\JsonException;
 use Nette\Utils\Random;
-use Omnipay\Core\Sign\HmacSign;
 
 final class PaymentPresenter extends Presenter
 {
+    /** Test keys: the simulator is public, so are its keys (see README.md). */
+    public const string DES_KEY = '11111111';
+
+    public const string AES_KEY = '1111111111111111111111111111111111111111111111111111111111111111';
+
+    public const string HMAC_KEY = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+
+    public const string EPLATBY_KEY = '1111111111111111111111111111111111111111111111111111111111111111';
+
+    public const string SPOROPAY_KEY = 'Z3qY08EpvLlAAoMZdnyUdQ==';
+
     public function renderTatrapayAes256(): void
     {
-        $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['SIGN'];
-
-        $tatrapaySign = new TatraPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL']);
-        $computedSign = $tatrapaySign->sign();
-
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'SIGN', static fn(RequestParameters $p): GatewaySign => new TatraPayAES256Sign(
+            self::AES_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->optional('CS'),
+            $p->required('RURL'),
+        ));
     }
 
     public function renderTatrapayDes(): void
     {
-        $sharedSecret = '11111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['SIGN'];
-
-        $tatrapaySign = new TatraPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL']);
-        $computedSign = $tatrapaySign->sign();
-
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'SIGN', static fn(RequestParameters $p): GatewaySign => new TatraPayDESSign(
+            self::DES_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->optional('CS'),
+            $p->required('RURL'),
+        ));
     }
 
     public function renderTatrapayHmac(): void
     {
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['HMAC'];
-
-        $tatrapaySign = new TatraPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL'], $this->params['REM'] ?? '', $this->params['TIMESTAMP']);
-        $computedSign = $tatrapaySign->sign();
-
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'HMAC', static fn(RequestParameters $p): GatewaySign => new TatraPayHmacSign(
+            self::HMAC_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->optional('CS'),
+            $p->required('RURL'),
+            $p->optional('REM'),
+            $p->required('TIMESTAMP'),
+        ));
     }
 
     public function renderCardpayAes256(): void
     {
-        $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['SIGN'];
-
-        $tatrapaySign = new CardPayAES256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL'], '', $this->params['IPC'], $this->params['NAME']);
-        $computedSign = $tatrapaySign->sign();
-
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'SIGN', static fn(RequestParameters $p): GatewaySign => new CardPayAES256Sign(
+            self::AES_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->optional('CS'),
+            $p->required('RURL'),
+            '',
+            $p->required('IPC'),
+            $p->required('NAME'),
+        ));
     }
 
     public function renderCardpayDes(): void
     {
-        $sharedSecret = '11111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['SIGN'];
-
-        $tatrapaySign = new CardPayDESSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL'], $this->params['IPC'], $this->params['NAME']);
-        $computedSign = $tatrapaySign->sign();
-
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'SIGN', static fn(RequestParameters $p): GatewaySign => new CardPayDESSign(
+            self::DES_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->optional('CS'),
+            $p->required('RURL'),
+            $p->required('IPC'),
+            $p->required('NAME'),
+        ));
     }
 
     public function renderCardpayHmac(): void
     {
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['HMAC'];
-
-        $tatrapaySign = new CardPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'] ?? '', $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
-        $computedSign = $tatrapaySign->sign();
-
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'HMAC', static fn(RequestParameters $p): GatewaySign => new CardPayHmacSign(
+            self::HMAC_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->required('RURL'),
+            $p->optional('REM'),
+            $p->required('TIMESTAMP'),
+            $p->required('IPC'),
+            $p->required('NAME'),
+        ));
     }
 
     public function renderComfortpayHmac(): void
     {
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['HMAC'];
-
-        $tatrapaySign = new ComfortPayHmacSign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['RURL'], $this->params['REM'] ?? '', $this->params['TPAY'], $this->params['TIMESTAMP'], $this->params['IPC'], $this->params['NAME']);
-        $computedSign = $tatrapaySign->sign();
-
-        $okReturnUrl = $tatrapaySign->returnUrlSign('OK');
-        $failReturnUrl = $tatrapaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $tatrapaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'HMAC', static fn(RequestParameters $p): GatewaySign => new ComfortPayHmacSign(
+            self::HMAC_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->required('RURL'),
+            $p->optional('REM'),
+            $p->required('TPAY'),
+            $p->required('TIMESTAMP'),
+            $p->required('IPC'),
+            $p->required('NAME'),
+        ));
     }
 
     public function renderComfortpayAes256(): void
     {
-        $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $this->params['MID'];
-
-        $inputSign = $this->params['SIGN'];
-
-        $comfortpaySign = new ComfortPayAes256Sign($sharedSecret, $mid, $this->params['AMT'], $this->params['CURR'], $this->params['VS'], $this->params['CS'] ?? '', $this->params['RURL'], $this->params['TPAY'], $this->params['IPC'], $this->params['NAME']);
-        $computedSign = $comfortpaySign->sign();
-
-        $okReturnUrl = $comfortpaySign->returnUrlSign('OK');
-        $failReturnUrl = $comfortpaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $comfortpaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'SIGN', static fn(RequestParameters $p): GatewaySign => new ComfortPayAes256Sign(
+            self::AES_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->optional('CS'),
+            $p->required('RURL'),
+            $p->required('TPAY'),
+            $p->required('IPC'),
+            $p->required('NAME'),
+        ));
     }
 
     public function renderEplatbyHmac(): void
     {
-        $params = $this->getRequest()->getPost();
-        $sharedSecret = '1111111111111111111111111111111111111111111111111111111111111111';
-        $mid = $params['MID'];
-
-        $inputSign = $params['SIGN'];
-
-        $ss = '';
-        if (isset($params['SS'])) {
-            $ss = $params['SS'];
-        }
-
-        $eplatbySign = new VubEplatbyHmacSign($sharedSecret, $mid, $params['AMT'], $params['VS'], $params['CS'] ?? '', $params['RURL'], $ss);
-        $computedSign = $eplatbySign->sign();
-
-        $okReturnUrl = $eplatbySign->returnUrlSign('OK');
-        $failReturnUrl = $eplatbySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $eplatbySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        // VÚB e-platby posts the form
+        $this->simulate(new RequestParameters($this->getHttpRequest()->getPost()), 'SIGN', static fn(RequestParameters $p): GatewaySign => new VubEplatbyHmacSign(
+            self::EPLATBY_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('VS'),
+            $p->optional('CS'),
+            $p->required('RURL'),
+            $p->optional('SS'),
+        ));
     }
 
     public function renderSporopayDes(): void
     {
-        $sharedSecret = 'Z3qY08EpvLlAAoMZdnyUdQ==';
-
-        $inputSign = $this->params['sign1'];
-
-        $sporopaySign = new SporoPay3DesSign($sharedSecret, $this->params['pu_predcislo'], $this->params['pu_cislo'], $this->params['pu_kbanky'], $this->params['suma'], $this->params['mena'], $this->params['vs'], $this->params['ss'], $this->params['url'], $this->params['param']);
-        $computedSign = $sporopaySign->sign();
-
-        $okReturnUrl = $sporopaySign->returnUrlSign('OK');
-        $failReturnUrl = $sporopaySign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $sporopaySign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'sign1', static fn(RequestParameters $p): GatewaySign => new SporoPay3DesSign(
+            self::SPOROPAY_KEY,
+            $p->required('pu_predcislo'),
+            $p->required('pu_cislo'),
+            $p->required('pu_kbanky'),
+            $p->required('suma'),
+            $p->required('mena'),
+            $p->required('vs'),
+            $p->required('ss'),
+            $p->required('url'),
+            $p->required('param'),
+        ));
     }
 
     public function renderCardpayAuthorizeHmac(): void
     {
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
-        $inputSign = $this->params['HMAC'];
-
-        $cardPayAuthorizeHmacSign = new CardPayAuthorizeHmacSign(
-            $sharedSecret,
-            $this->getParameter('MID'),
-            $this->getParameter('AMT'),
-            $this->getParameter('CURR'),
-            $this->getParameter('VS'),
-            $this->getParameter('RURL'),
-            $this->getParameter('IPC'),
-            $this->getParameter('NAME'),
-            $this->getParameter('TIMESTAMP'),
-            $this->getParameter('E2E') ?? '',
-            $this->getParameter('TXN') ?? '',
-            $this->getParameter('REM') ?? '',
-            $this->getParameter('TPAY') ?? '',
-            $this->getParameter('CID') ?? '',
-            $this->getParameter('ECID') ?? '',
-            $this->getParameter('TDS_CARDHOLDER') ?? '',
-            $this->getParameter('TDS_EMAIL') ?? '',
-            $this->getParameter('TDS_MOBILE_PHONE') ?? '',
-            $this->getParameter('TDS_BILL_CITY') ?? '',
-            $this->getParameter('TDS_BILL_COUNTRY') ?? '',
-            $this->getParameter('TDS_BILL_ADDRESS1') ?? '',
-            $this->getParameter('TDS_BILL_ADDRESS2') ?? '',
-            $this->getParameter('TDS_BILL_ZIP') ?? '',
-            $this->getParameter('TDS_SHIP_CITY') ?? '',
-            $this->getParameter('TDS_SHIP_COUNTRY') ?? '',
-            $this->getParameter('TDS_SHIP_ADDRESS1') ?? '',
-            $this->getParameter('TDS_SHIP_ADDRESS2') ?? '',
-            $this->getParameter('TDS_SHIP_ZIP') ?? '',
-            $this->getParameter('TDS_ADDR_MATCH') ?? '',
-        );
-
-        $computedSign = $cardPayAuthorizeHmacSign->sign();
-
-        $okReturnUrl = $cardPayAuthorizeHmacSign->returnUrlSign('OK');
-        $failReturnUrl = $cardPayAuthorizeHmacSign->returnUrlSign('FAIL');
-        $timeoutReturnUrl = $cardPayAuthorizeHmacSign->returnUrlSign('TOUT');
-
-        $this->template->computedSign = $computedSign;
-        $this->template->inputSign = $inputSign;
-        $this->template->params = $this->params;
-
-        $this->template->okReturnUrl = $okReturnUrl;
-        $this->template->failReturnUrl = $failReturnUrl;
-        $this->template->timeoutReturnUrl = $timeoutReturnUrl;
+        $this->simulate($this->queryParameters(), 'HMAC', static fn(RequestParameters $p): GatewaySign => new CardPayAuthorizeHmacSign(
+            self::HMAC_KEY,
+            $p->required('MID'),
+            $p->required('AMT'),
+            $p->required('CURR'),
+            $p->required('VS'),
+            $p->required('RURL'),
+            $p->required('IPC'),
+            $p->required('NAME'),
+            $p->required('TIMESTAMP'),
+            $p->optional('E2E'),
+            $p->optional('TXN'),
+            $p->optional('REM'),
+            $p->optional('TPAY'),
+            $p->optional('CID'),
+            $p->optional('ECID'),
+            $p->optional('TDS_CARDHOLDER'),
+            $p->optional('TDS_EMAIL'),
+            $p->optional('TDS_MOBILE_PHONE'),
+            $p->optional('TDS_BILL_CITY'),
+            $p->optional('TDS_BILL_COUNTRY'),
+            $p->optional('TDS_BILL_ADDRESS1'),
+            $p->optional('TDS_BILL_ADDRESS2'),
+            $p->optional('TDS_BILL_ZIP'),
+            $p->optional('TDS_SHIP_CITY'),
+            $p->optional('TDS_SHIP_COUNTRY'),
+            $p->optional('TDS_SHIP_ADDRESS1'),
+            $p->optional('TDS_SHIP_ADDRESS2'),
+            $p->optional('TDS_SHIP_ZIP'),
+            $p->optional('TDS_ADDR_MATCH'),
+        ));
     }
 
-    public function actionCardpayCancelPurchase()
+    public function actionCardpayCancelPurchase(): void
     {
+        $p = $this->queryParameters();
+        // one element per line, indented like the rest of the document
+        $request = implode("\n        ", [
+            '<mid>' . $this->xml($p->optional('MID')) . '</mid>',
+            '<amt>' . $this->xml($p->optional('AMT')) . '</amt>',
+            '<tid>' . $this->xml($p->optional('TID')) . '</tid>',
+            '<txn>' . $this->xml($p->optional('TXN')) . '</txn>',
+            '<timestamp>' . $this->xml($p->optional('TIMESTAMP')) . '</timestamp>',
+        ]);
+
         $successXml = <<<XML
             <?xml version="1.0" encoding="windows-1250"?>
                 <cardpay>
                 <request>
-                    <mid>{$this->params['MID']}</mid>
-                    <amt>{$this->params['AMT']}</amt>
-                    <tid>{$this->params['TID']}</tid>
-                    <txn>{$this->params['TXN']}</txn>
-                    <timestamp>{$this->params['TIMESTAMP']}</timestamp>
+                    {$request}
                 </request>
                 <result>
                     <res>OK</res>
@@ -334,11 +253,7 @@ final class PaymentPresenter extends Presenter
             <?xml version="1.0" encoding="windows-1250"?>
                 <cardpay>
                 <request>
-                    <mid>{$this->params['MID']}</mid>
-                    <amt>{$this->params['AMT']}</amt>
-                    <tid>{$this->params['TID']}</tid>
-                    <txn>{$this->params['TXN']}</txn>
-                    <timestamp>{$this->params['TIMESTAMP']}</timestamp>
+                    {$request}
                 </request>
                 <result>
                     <res>FAIL</res>
@@ -347,96 +262,57 @@ final class PaymentPresenter extends Presenter
             </cardpay>
             XML;
 
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
+        $input = $p->optional('MID') . $p->optional('AMT') . $p->optional('TID') . $p->optional('VS') . $p->optional('TXN') . $p->optional('REM') . $p->optional('TIMESTAMP');
 
-        $hmacSign = new HmacSign();
-        $input = "{$this->getParameter('MID')}{$this->getParameter('AMT')}{$this->getParameter('TID')}";
-        $input .= "{$this->getParameter('VS')}{$this->getParameter('TXN')}{$this->getParameter('REM')}{$this->getParameter('TIMESTAMP')}";
-
-        $receivedHmac = $this->params['HMAC'] ?? null;
-        if (!is_string($receivedHmac) || !hash_equals($hmacSign->sign($input, $sharedSecret), $receivedHmac)) {
-            $response = new CancelAuthorizationResponse($failXml, []);
-            $this->sendResponse($response);
+        $receivedHmac = $p->all()['HMAC'] ?? null;
+        if (!is_string($receivedHmac) || !hash_equals(LibrarySign::tatraHmac($input, self::HMAC_KEY), $receivedHmac)) {
+            $this->sendResponse(new CancelAuthorizationResponse($failXml, []));
         }
 
-        $response = new CancelAuthorizationResponse($successXml, [
-            'Authorization' => "HMAC={$hmacSign->sign($successXml, $sharedSecret)},ECDSA=3046022100a4e5491ab9376f8cd9e51c176f5e75bb3664e3f852e901d36ac0a5b0f2177fad0221008794e59ab8027c68ae74ea65d0f5b5913865db9a818044d06c114f4d84346f48, ECDSA_KEY=1",
-        ]);
-
-        $this->sendResponse($response);
-    }
-
-
-    // todo move to separate presenter and add router
-
-    private function generateAuthorizationCode($letters = 2, $numbers = 4): string
-    {
-        return Random::generate($letters, 'A-Z') . Random::generate($numbers, '0-9');
-    }
-
-    private function checkAuthorization($body, $sharedSecret): bool
-    {
-        $hmacSign = new HmacSign();
-        $input = $body;
-        $auth = $hmacSign->sign($input, $sharedSecret);
-        $header = $this->getHttpRequest()->getHeader('Authorization');
-        if ($header === null) {
-            return false;
-        }
-        $parts = explode('=', $header, 2);
-        return isset($parts[1]) && hash_equals($auth, $parts[1]);
+        $this->sendResponse(new CancelAuthorizationResponse($successXml, [
+            'Authorization' => 'HMAC=' . LibrarySign::tatraHmac($successXml, self::HMAC_KEY) . ',ECDSA=3046022100a4e5491ab9376f8cd9e51c176f5e75bb3664e3f852e901d36ac0a5b0f2177fad0221008794e59ab8027c68ae74ea65d0f5b5913865db9a818044d06c114f4d84346f48, ECDSA_KEY=1',
+        ]));
     }
 
     public function renderCardPayDirectPayPostTransaction(): void
     {
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
         $httpRequest = $this->getHttpRequest();
-        $requestBody = $httpRequest->getRawBody();
+        $requestBody = (string) $httpRequest->getRawBody();
 
-        if (!$this->checkAuthorization($requestBody, $sharedSecret)) {
-            $response = new JsonResponse([
-                'error' => 'Invalid authorization header',
-            ]);
-            $httpResponse = $this->getHttpResponse();
-            $httpResponse->setCode(\Nette\Http\IResponse::S400_BAD_REQUEST);
-            $this->sendResponse($response);
+        if (!$this->checkAuthorization($requestBody)) {
+            $this->sendError('Invalid authorization header');
         }
-
-        $isGooglePay = false;
-        //        $isApplePay = false;
-        $isTds = false;
 
         try {
-            $body = Json::decode($requestBody, Json::FORCE_ARRAY);
-        } catch (JsonException $jsonException) {
-            $response = new JsonResponse([
+            $body = Json::decode($requestBody, forceArrays: true);
+        } catch (JsonException) {
+            $this->sendResponse(new JsonResponse([
                 'error' => 'Cannot process Google Pay token',
-            ]);
-            $this->sendResponse($response);
+            ]));
         }
 
-        if (isset($body['googlePayToken'])) {
-            $isGooglePay = true;
+        if (!is_array($body) || !isset($body['amount']) || !is_numeric($body['amount'])) {
+            $this->sendError('Missing or invalid amount');
         }
+        $amount = (float) $body['amount'];
+        $isGooglePay = isset($body['googlePayToken']);
+        $isTds = false;
 
         $status = 'OK';
-
-        if ($isGooglePay) {
-            if ($body['amount'] >= 10 * 100) {
-                $status = 'TDS_AUTH_REQUIRED';
-                $isTds = true;
-            }
+        if ($isGooglePay && $amount >= 10 * 100) {
+            $status = 'TDS_AUTH_REQUIRED';
+            $isTds = true;
         }
-        if ($body['amount'] >= 100 * 100) {
+        if ($amount >= 100 * 100) {
             $status = 'FAIL';
         }
 
-        $processingId = 10000 + rand(0, 9999);
+        $processingId = 10000 + random_int(0, 9999);
 
         $data = [
             'processingId' => $processingId,
-            'status' => $status, // FAIL, TDS_AUTH_REQUIRED
-            'transactionId' => rand(100000, 199999),
+            'status' => $status, // OK, FAIL, TDS_AUTH_REQUIRED
+            'transactionId' => random_int(100000, 199999),
             'transactionData' => [
                 'authorizationCode' => $this->generateAuthorizationCode(),
                 'responseCode' => '00',
@@ -445,9 +321,12 @@ final class PaymentPresenter extends Presenter
 
         if ($isTds) {
             $timestamp = date('dmYHis');
+            $url = $httpRequest->getUrl();
+            $action = htmlspecialchars("{$url->getScheme()}://{$url->getHost()}/cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds");
+            $tdsTermUrl = htmlspecialchars(is_string($body['tdsTermUrl'] ?? null) ? $body['tdsTermUrl'] : '');
             $data['tdsRedirectionFormHtml'] = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>3D Secure
-Processing</title></head><body><form action=\"{$this->getHttpRequest()->getUrl()->getScheme()}://{$this->getHttpRequest()->getUrl()->getHost()}/cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds\" method=\"POST\" name=\"redirectionForm\">
-<input type=\"hidden\" name=\"tdsTermUrl\" value=\"{$body['tdsTermUrl']}\">
+Processing</title></head><body><form action=\"{$action}\" method=\"POST\" name=\"redirectionForm\">
+<input type=\"hidden\" name=\"tdsTermUrl\" value=\"{$tdsTermUrl}\">
 <input type=\"hidden\" name=\"processingId\" value=\"{$processingId}\">
 <input type=\"hidden\" name=\"timestamp\" value=\"{$timestamp}\">
 <input type=\"hidden\" name=\"signature\" value=\"signature\"><noscript>
@@ -455,47 +334,27 @@ Processing</title></head><body><form action=\"{$this->getHttpRequest()->getUrl()
 </form></body></html>";
         }
 
-        $response = new JsonResponse($data);
-
-        $this->appendResponseHmac($response, $sharedSecret);
-        $this->sendResponse($response);
+        $this->sendSignedJson($data);
     }
 
-    public function renderCardPayDirectPayCheckTransaction($processingId): void
+    public function renderCardPayDirectPayCheckTransaction(string $processingId): void
     {
-        $sharedSecret = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111';
         $httpRequest = $this->getHttpRequest();
         $signString = "{$httpRequest->getHeader('X-Merchant-Id')};{$httpRequest->getHeader('X-Timestamp')};{$processingId}";
 
-        if (!$this->checkAuthorization($signString, $sharedSecret)) {
-            $response = new JsonResponse([
-                'error' => 'Invalid authorization header',
-            ]);
-            $httpResponse = $this->getHttpResponse();
-            $httpResponse->setCode(\Nette\Http\IResponse::S400_BAD_REQUEST);
-            $this->sendResponse($response);
+        if (!$this->checkAuthorization($signString)) {
+            $this->sendError('Invalid authorization header');
         }
 
-        $response = new JsonResponse([
+        $this->sendSignedJson([
             'processingId' => $processingId,
             'status' => 'OK',
-            'transactionId' => rand(100000, 199999),
+            'transactionId' => random_int(100000, 199999),
             'transactionData' => [
                 'authorizationCode' => $this->generateAuthorizationCode(),
                 'responseCode' => '00',
             ],
         ]);
-
-        $this->appendResponseHmac($response, $sharedSecret);
-        $this->sendResponse($response);
-    }
-
-    private function appendResponseHmac(JsonResponse $response, string $sharedSecret): void
-    {
-        $hmacSign = new HmacSign();
-        $payloadData = Json::encode($response->getPayload());
-        $auth = $hmacSign->sign($payloadData, $sharedSecret);
-        $this->getHttpResponse()->addHeader('Authorization', "HMAC={$auth}, ECDSA=ecdsa, ECDSA_KEY=1");
     }
 
     public function renderCardPayDirectPay3ds(): void
@@ -503,5 +362,78 @@ Processing</title></head><body><form action=\"{$this->getHttpRequest()->getUrl()
         header_remove('X-Frame-Options');
         $this->template->tdsTermUrl = $this->getHttpRequest()->getPost('tdsTermUrl');
         $this->template->params = $this->getHttpRequest()->getPost();
+    }
+
+    private function queryParameters(): RequestParameters
+    {
+        return new RequestParameters($this->params);
+    }
+
+    /**
+     * Renders the simulator page: the computed and the received signature and, when they match,
+     * the signed OK/FAIL/TOUT return URLs. Lists the missing parameters instead when some are absent.
+     *
+     * @param \Closure(RequestParameters): GatewaySign $createSign
+     */
+    private function simulate(RequestParameters $params, string $signParameter, \Closure $createSign): void
+    {
+        $sign = $createSign($params);
+        $inputSign = $params->required($signParameter);
+
+        $this->template->params = $params->all();
+
+        if ($params->missing() !== []) {
+            $this->getHttpResponse()->setCode(IResponse::S400_BadRequest);
+            $this->template->missingParameters = $params->missing();
+            $this->setView('missingParameters');
+            return;
+        }
+
+        $computedSign = $sign->sign();
+
+        $this->template->computedSign = $computedSign;
+        $this->template->inputSign = $inputSign;
+        $this->template->signValid = hash_equals($computedSign, $inputSign);
+
+        $this->template->okReturnUrl = $sign->returnUrlSign('OK');
+        $this->template->failReturnUrl = $sign->returnUrlSign('FAIL');
+        $this->template->timeoutReturnUrl = $sign->returnUrlSign('TOUT');
+    }
+
+    private function generateAuthorizationCode(): string
+    {
+        return Random::generate(2, 'A-Z') . Random::generate(4, '0-9');
+    }
+
+    private function xml(string $value): string
+    {
+        return htmlspecialchars($value, ENT_XML1 | ENT_QUOTES);
+    }
+
+    private function checkAuthorization(string $signedContent): bool
+    {
+        $header = $this->getHttpRequest()->getHeader('Authorization');
+        if ($header === null) {
+            return false;
+        }
+        $parts = explode('=', $header, 2);
+
+        return isset($parts[1]) && hash_equals(LibrarySign::tatraHmac($signedContent, self::HMAC_KEY), $parts[1]);
+    }
+
+    private function sendError(string $message): never
+    {
+        $this->getHttpResponse()->setCode(IResponse::S400_BadRequest);
+        $this->sendResponse(new JsonResponse(['error' => $message]));
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function sendSignedJson(array $data): never
+    {
+        $auth = LibrarySign::tatraHmac(Json::encode($data), self::HMAC_KEY);
+        $this->getHttpResponse()->addHeader('Authorization', "HMAC={$auth}, ECDSA=ecdsa, ECDSA_KEY=1");
+        $this->sendResponse(new JsonResponse($data));
     }
 }

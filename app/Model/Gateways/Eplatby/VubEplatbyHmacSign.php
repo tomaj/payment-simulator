@@ -4,55 +4,33 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\Eplatby;
 
-use Omnipay\Eplatby\Sign\HmacSign;
+use App\Model\Gateways\GatewaySign;
+use App\Model\Gateways\ReturnUrl;
+use App\Model\Sign\LibrarySign;
 
-class VubEplatbyHmacSign
+final readonly class VubEplatbyHmacSign implements GatewaySign
 {
-    private $sharedSecret;
+    public function __construct(
+        private string $sharedSecret,
+        private string $mid,
+        private string $amt,
+        private string $vs,
+        private string $cs,
+        private string $rurl,
+        private string $ss = '',
+    ) {}
 
-    private $mid;
-
-    private $amt;
-
-    private $vs;
-
-    private $cs;
-
-    private $ss;
-
-    private $rurl;
-
-    public function __construct($sharedSecret, $mid, $amt, $vs, $cs, $rurl, $ss = '')
-    {
-        $this->sharedSecret = $sharedSecret;
-        $this->mid = $mid;
-        $this->amt = $amt;
-        $this->vs = $vs;
-        $this->cs = $cs;
-        $this->rurl = $rurl;
-        $this->ss = $ss;
-    }
-
+    #[\Override]
     public function sign(): string
     {
-        $base = "{$this->mid}{$this->amt}{$this->vs}{$this->cs}{$this->ss}{$this->rurl}";
-
-        $hmacSign = new HmacSign();
-
-        return $hmacSign->sign($base, $this->sharedSecret);
+        return LibrarySign::eplatbyHmac("{$this->mid}{$this->amt}{$this->vs}{$this->cs}{$this->ss}{$this->rurl}", $this->sharedSecret);
     }
 
+    #[\Override]
     public function returnUrlSign(string $result): string
     {
-        $base = "{$this->vs}{$result}";
+        $sign = LibrarySign::eplatbyHmac("{$this->vs}{$result}", $this->sharedSecret);
 
-        $hmacSign = new HmacSign();
-        $sign = $hmacSign->sign($base, $this->sharedSecret);
-
-        $params = "VS={$this->vs}&RES={$result}&SIGN=" . $sign;
-        if (str_contains($this->rurl, '?')) {
-            return $this->rurl . '&' . $params;
-        }
-        return $this->rurl . '?' . $params;
+        return ReturnUrl::append($this->rurl, "VS={$this->vs}&RES={$result}&SIGN={$sign}");
     }
 }

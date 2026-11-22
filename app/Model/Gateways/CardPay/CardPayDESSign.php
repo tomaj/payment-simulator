@@ -4,63 +4,41 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\CardPay;
 
+use App\Model\Gateways\GatewaySign;
+use App\Model\Gateways\ReturnUrl;
 use App\Model\Sign\DesSign;
 
-class CardPayDESSign
+final readonly class CardPayDESSign implements GatewaySign
 {
-    private $sharedSecret;
+    /** Approval code the simulator returns */
+    private const string AC = '111111';
 
-    private $mid;
+    public function __construct(
+        private string $sharedSecret,
+        private string $mid,
+        private string $amt,
+        private string $curr,
+        private string $vs,
+        private string $cs,
+        private string $rurl,
+        private string $ipc = '',
+        private string $name = '',
+    ) {}
 
-    private $amt;
-
-    private $curr;
-
-    private $vs;
-
-    private $cs;
-
-    private $rurl;
-
-    private $ipc;
-
-    private $name;
-
-    private $ac;
-
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $ipc = '', $name = '')
-    {
-        $this->sharedSecret = $sharedSecret;
-        $this->mid = $mid;
-        $this->amt = $amt;
-        $this->curr = $curr;
-        $this->vs = $vs;
-        $this->cs = $cs;
-        $this->rurl = $rurl;
-        $this->ipc = $ipc;
-        $this->name = $name;
-        $this->ac = 111111;
-    }
-
+    #[\Override]
     public function sign(): string
     {
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}";
 
-        $desSign = new DesSign();
-        return $desSign->sign($base, $this->sharedSecret);
+        return new DesSign()->sign($base, $this->sharedSecret);
     }
 
+    #[\Override]
     public function returnUrlSign(string $result): string
     {
-        $base = "{$this->vs}{$result}{$this->ac}";
+        $ac = self::AC;
+        $sign = new DesSign()->sign("{$this->vs}{$result}{$ac}", $this->sharedSecret);
 
-        $desSign = new DesSign();
-        $sign = $desSign->sign($base, $this->sharedSecret);
-
-        $params = "VS={$this->vs}&AC={$this->ac}&RES={$result}&SIGN={$sign}";
-        if (str_contains($this->rurl, '?')) {
-            return $this->rurl . '&' . $params;
-        }
-        return $this->rurl . '?' . $params;
+        return ReturnUrl::append($this->rurl, "VS={$this->vs}&AC={$ac}&RES={$result}&SIGN={$sign}");
     }
 }

@@ -9,6 +9,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - **BREAKING CHANGE**: Requires PHP 8.4 (`config.platform.php` 8.4.1, which PHPUnit 13 needs); the Docker image is based on `php:8.4-fpm`. Rebuild the image (`docker compose build`) ([#20](https://github.com/tomaj/payment-simulator/issues/20)).
 - Dependencies updated within their constraints (`composer update`), among them `nette/neon` 4 and Symfony 8 components.
 - Docker: Xdebug 3 settings (`xdebug.mode=debug`, trigger mode, port 9003; set `client_host` through `XDEBUG_CONFIG`), the removed `opcache.fast_shutdown` dropped, the obsolete `version:` key dropped from the compose files ([#27](https://github.com/tomaj/payment-simulator/issues/27)).
+- The sign classes are `final readonly` with typed, promoted constructors and a common `GatewaySign` interface; every class is `final`. Signatures and return URLs are unchanged (old and new pages compared on fixed requests) ([#21](https://github.com/tomaj/payment-simulator/issues/21)).
 - PHPStan level max with the deprecation and PHPUnit rules, Rector, and the baseline composer scripts (`test`, `coverage`, `rector`, …) with descriptions ([#19](https://github.com/tomaj/payment-simulator/issues/19)).
 - Requires PHP 8.3 - 8.6 (was PHP >= 7.2); the Docker image is based on `php:8.3-fpm` ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
 - Nette 3.2+/3.3 (application, bootstrap, forms, http, security, di), nette/utils 4, nette/robot-loader 4,
@@ -22,6 +23,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - The Docker image enables the OpenSSL legacy provider (`OPENSSL_CONF`), which single DES needs on OpenSSL 3 ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
 
 ### Fixed
+
+- The signature check on every payment page uses `hash_equals()` in the presenter instead of `==` in the templates, which treated two different numeric-looking signatures (`0E…` digits) as equal ([#21](https://github.com/tomaj/payment-simulator/issues/21)).
+- A request without a required parameter shows "Missing parameters" with the list of names (HTTP 400) instead of an undefined-index error ([#21](https://github.com/tomaj/payment-simulator/issues/21)).
+- CardPay Direct API: a body without a numeric `amount` returns 400; `tdsTermUrl` is HTML-escaped in the 3-D Secure form; the CardPay cancel XML escapes the echoed parameters ([#21](https://github.com/tomaj/payment-simulator/issues/21)).
 
 - SporoPay return URL: `SporoPay3DesSign::returnUrlSign()` read the undefined `$rurl` property and failed ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
 - Missing optional `CS` / `REM` parameters no longer raise warnings (HTTP 500 in debug mode) ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
