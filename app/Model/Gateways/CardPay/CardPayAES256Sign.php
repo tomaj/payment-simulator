@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\CardPay;
 
-use Nette\Utils\Strings;
-use Omnipay\Core\Sign\Aes256Sign;
+use App\Model\Sign\Aes256Sign;
 
 class CardPayAES256Sign
 {
@@ -28,6 +27,8 @@ class CardPayAES256Sign
     private $ipc;
 
     private $name;
+
+    private $ac;
 
     public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $rem = '', $ipc = '', $name = '')
     {
@@ -61,9 +62,9 @@ class CardPayAES256Sign
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
         $params = "VS={$this->vs}&AC={$this->ac}&RES={$result}&SIGN=" . $sign;
-        if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }

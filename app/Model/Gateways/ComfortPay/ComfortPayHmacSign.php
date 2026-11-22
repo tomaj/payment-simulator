@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\ComfortPay;
 
-use Nette\Utils\Strings;
 use Omnipay\Core\Sign\HmacSign;
 
 class ComfortPayHmacSign
@@ -19,8 +18,6 @@ class ComfortPayHmacSign
 
     private $vs;
 
-    private $cs;
-
     private $rurl;
 
     private $rem;
@@ -34,6 +31,14 @@ class ComfortPayHmacSign
     private $tid;
 
     private $tpay;
+
+    private $ac;
+
+    private $cid;
+
+    private $cc;
+
+    private $rc;
 
     public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $rurl, $rem, $tpay, $timestamp, $ipc = '', $name = '')
     {
@@ -57,7 +62,7 @@ class ComfortPayHmacSign
 
     public function sign()
     {
-    	$base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->tpay}{$this->timestamp}";
+        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->rurl}{$this->ipc}{$this->name}{$this->rem}{$this->tpay}{$this->timestamp}";
 
         $hmacSign = new HmacSign();
 
@@ -69,14 +74,14 @@ class ComfortPayHmacSign
         $base = "{$this->amt}{$this->curr}{$this->vs}{$result}{$this->ac}{$result}{$this->cid}{$this->cc}{$this->rc}{$this->tid}{$this->timestamp}";
 
         $hmacSign = new HmacSign();
-         
+
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
         $params = "VS={$this->vs}&AMT={$this->amt}&CURR={$this->curr}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&CC={$this->cc}&RC={$this->rc}&TIMESTAMP={$this->timestamp}&HMAC=" . $sign;
 
-         if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }

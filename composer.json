@@ -1,35 +1,62 @@
 {
-	"name": "nette/web-project",
-	"description": "Nette: Standard Web Project",
+	"name": "tomaj/payment-simulator",
+	"description": "Simulator of Slovak bank online payment gateways (TatraPay, CardPay, ComfortPay, VUB ePlatby, SporoPay)",
 	"type": "project",
-	"license": ["MIT", "BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"license": [
+		"MIT",
+		"BSD-3-Clause",
+		"GPL-2.0-only",
+		"GPL-3.0-only"
+	],
 	"require": {
-		"php": ">= 7.2",
-		"nette/application": "^3.1",
-		"nette/bootstrap": "^3.1",
-		"nette/caching": "^3.1",
-		"nette/database": "^3.1",
-		"nette/di": "^3.0",
-		"nette/finder": "^2.5",
-		"nette/forms": "^3.1",
-		"nette/http": "^3.1",
-		"nette/mail": "^3.1",
-		"nette/robot-loader": "^3.3",
-		"nette/security": "^3.1",
-		"nette/utils": "^3.2",
-		"latte/latte": "^2.9",
-		"tracy/tracy": "^2.8",
+		"php": "^8.3",
+		"ext-openssl": "*",
+		"latte/latte": "^3.0",
+		"moneyphp/money": "^3.3.3",
+		"nette/application": "^3.2",
+		"nette/bootstrap": "^3.2",
+		"nette/di": "^3.2",
+		"nette/forms": "^3.2",
+		"nette/http": "^3.3",
+		"nette/robot-loader": "^4.0",
+		"nette/security": "^3.2",
+		"nette/utils": "^4.0",
+		"php-http/guzzle7-adapter": "^1.0",
+		"tomaj/omnipay-slsp": "^3.0",
 		"tomaj/omnipay-tatra": "^4.0",
 		"tomaj/omnipay-vub": "^3.0",
-		"tomaj/omnipay-slsp": "^3.0",
-		"php-http/guzzle6-adapter": "^2.0"
+		"tracy/tracy": "^2.10"
 	},
 	"require-dev": {
+		"friendsofphp/php-cs-fixer": "^3.75",
+		"phpstan/phpstan": "^2.1",
+		"phpstan/phpstan-nette": "^2.0",
+		"phpstan/phpstan-strict-rules": "^2.0"
 	},
 	"autoload": {
 		"psr-4": {
 			"App\\": "app"
 		}
 	},
-	"minimum-stability": "stable"
+	"minimum-stability": "stable",
+	"scripts": {
+		"check": [
+			"@phpcs",
+			"@phpstan",
+			"@lint"
+		],
+		"cs-fix": "php-cs-fixer fix",
+		"lint": "find app www -name '*.php' -print0 | xargs -0 -n1 php -l",
+		"phpcs": "php-cs-fixer fix --dry-run --diff --verbose",
+		"phpstan": "phpstan analyse --memory-limit=1G"
+	},
+	"config": {
+		"platform": {
+			"php": "8.3.0"
+		},
+		"sort-packages": true,
+		"allow-plugins": {
+			"php-http/discovery": false
+		}
+	}
 }

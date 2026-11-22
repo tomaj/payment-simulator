@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\ComfortPay;
 
-use Nette\Utils\Strings;
-use Omnipay\Core\Sign\Aes256Sign;
+use App\Model\Sign\Aes256Sign;
 
 class ComfortPayAes256Sign
 {
@@ -23,17 +22,17 @@ class ComfortPayAes256Sign
 
     private $rurl;
 
-    private $rem;
-
     private $ipc;
 
     private $name;
 
-    private $tid;
-
     private $tpay;
 
-    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $rem, $tpay, $ipc = '', $name = '')
+    private $ac;
+
+    private $cid;
+
+    public function __construct($sharedSecret, $mid, $amt, $curr, $vs, $cs, $rurl, $tpay, $ipc = '', $name = '')
     {
         $this->sharedSecret = $sharedSecret;
         $this->mid = $mid;
@@ -42,18 +41,16 @@ class ComfortPayAes256Sign
         $this->vs = $vs;
         $this->cs = $cs;
         $this->rurl = $rurl;
-        $this->rem = $rem;
         $this->tpay = $tpay;
         $this->ipc = $ipc;
         $this->name = $name;
         $this->ac = 111111;
         $this->cid = 111111;
-        $this->tid = '';
     }
 
     public function sign(): string
     {
-    	$base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}{$this->tpay}";
+        $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}{$this->tpay}";
 
         $sign = new Aes256Sign();
 
@@ -68,9 +65,9 @@ class ComfortPayAes256Sign
         $sign = $sign->sign($base, $this->sharedSecret);
 
         $params = "VS={$this->vs}&RES={$result}&TRES={$result}&AC={$this->ac}&CID={$this->cid}&SIGN=" . $sign;
-        if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }

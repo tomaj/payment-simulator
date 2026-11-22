@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\CardPay;
 
-use Nette\Utils\Strings;
 use Omnipay\Core\Sign\HmacSign;
 
 class CardPayAuthorizeHmacSign
@@ -96,7 +95,7 @@ class CardPayAuthorizeHmacSign
         $tdsShipAddress1 = '',
         $tdsShipAddress2 = '',
         $tdsShipZip = '',
-        $tdsAddrMatch = ''
+        $tdsAddrMatch = '',
     ) {
         $this->sharedSecret = $sharedSecret;
         $this->mid = $mid;
@@ -163,10 +162,10 @@ class CardPayAuthorizeHmacSign
         $hmacSign = new HmacSign();
         $sign = $hmacSign->sign($base, $this->sharedSecret);
         $params = "AMT={$this->amt}&CURR={$this->curr}&VS={$this->vs}&TXN={$this->txn}&RES={$result}&AC={$ac}&TRES={$tres}&CID={$cid}&CC={$cc}&RC={$rc}&TID={$tid}&TIMESTAMP={$this->timestamp}&HMAC={$sign}";
-        if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
 
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }

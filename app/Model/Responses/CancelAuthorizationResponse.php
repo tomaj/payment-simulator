@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Model\Responses;
 
 use Nette;
-use Nette\Application\IResponse;
 
-class CancelAuthorizationResponse implements IResponse
+class CancelAuthorizationResponse implements Nette\Application\Response
 {
     private $xml;
 
@@ -17,7 +18,7 @@ class CancelAuthorizationResponse implements IResponse
         $this->headers = $headers;
     }
 
-    function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse): void
+    public function send(Nette\Http\IRequest $httpRequest, Nette\Http\IResponse $httpResponse): void
     {
         foreach ($this->headers as $name => $value) {
             $httpResponse->addHeader($name, $value);

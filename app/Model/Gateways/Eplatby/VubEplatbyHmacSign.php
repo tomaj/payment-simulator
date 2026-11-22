@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Model\Gateways\Eplatby;
 
-use Nette\Utils\Strings;
 use Omnipay\Eplatby\Sign\HmacSign;
 
 class VubEplatbyHmacSign
@@ -51,9 +50,9 @@ class VubEplatbyHmacSign
         $sign = $hmacSign->sign($base, $this->sharedSecret);
 
         $params = "VS={$this->vs}&RES={$result}&SIGN=" . $sign;
-        if (Strings::contains($this->rurl, '?')) {
+        if (str_contains($this->rurl, '?')) {
             return $this->rurl . '&' . $params;
         }
-        return $this->rurl . "?" . $params;
+        return $this->rurl . '?' . $params;
     }
 }
