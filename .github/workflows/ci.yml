@@ -60,7 +60,8 @@ jobs:
       run: vendor/bin/latte-lint app
 
     - name: Require single DES
-      run: php -r 'exit(openssl_encrypt("x", "des-ecb", "12345678", OPENSSL_RAW_DATA) === false ? 1 : 0);'
+      run: |
+        php -r 'exit(openssl_encrypt("x", "des-ecb", "12345678", OPENSSL_RAW_DATA) === false ? 1 : 0);'
 
     - name: Run tests
       if: matrix.php != '8.6'
