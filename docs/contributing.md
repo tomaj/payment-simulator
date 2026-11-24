@@ -37,7 +37,8 @@ Examples workflow serves the pull request's code and runs every one of them. Run
 ## This documentation
 
 The site is VitePress in `docs/`; the code on its pages is included from `examples/`, and `tests/DocsSnippetsTest.php`
-runs the PHP blocks of README.md and `docs/`.
+runs the PHP blocks of README.md and `docs/`. English pages are at the root of `docs/`, Slovak ones in `docs/sk/` with
+the same paths; a CI check (`npm run docs:locales`) fails when a page has no twin in the other language.
 
 ```bash
 cd docs
@@ -48,4 +49,4 @@ npm run images       # after a change to scripts/illustrations.py: SVGs, og.png,
 ```
 
 The logo, the hero illustration, the diagram and the social card are generated from `docs/scripts/illustrations.py`;
-edit the script, not the SVGs.
+the hero illustration and the diagram in English and in Slovak (`-sk` files). Edit the script, not the SVGs.
