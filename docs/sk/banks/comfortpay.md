@@ -41,4 +41,4 @@ Každá odpoveď, aj `FAIL` a `TOUT`, nesie `CID=111111`. S omnipay-tatra v test
 ID karty a zamietne párne, takže platba z karty simulátora prejde.
 
 Príklad: [omnipay-tatra](/sk/examples/omnipay-tatra) a
-[predplatné cez ComfortPay](https://tomaj.github.io/omnipay-tatra/examples/comfortpay-recurring) v dokumentácii omnipay-tatra.
+[predplatné cez ComfortPay](https://tomaj.github.io/omnipay-tatra/sk/examples/comfortpay-recurring) v dokumentácii omnipay-tatra.

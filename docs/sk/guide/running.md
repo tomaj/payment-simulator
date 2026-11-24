@@ -86,7 +86,7 @@ naklonujte:
     "$RUNNER_TEMP/payment-simulator/examples/ci/serve.sh"
 ```
 
-Takto bežia proti simulátoru [príklady omnipay-tatra](https://tomaj.github.io/omnipay-tatra/examples/).
+Takto bežia proti simulátoru [príklady omnipay-tatra](https://tomaj.github.io/omnipay-tatra/sk/examples/).
 
 ## Verejná inštancia {#the-public-instance}
 

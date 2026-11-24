@@ -43,5 +43,5 @@ podpísané odkazy späť.
 
 ## V iných repozitároch {#in-other-repositories}
 
-[omnipay-tatra](https://tomaj.github.io/omnipay-tatra/examples/) spúšťa vlastné príklady proti klonu tohto
+[omnipay-tatra](https://tomaj.github.io/omnipay-tatra/sk/examples/) spúšťa vlastné príklady proti klonu tohto
 repozitára, ktorý štartuje rovnakým spôsobom; pozrite [Spustenie v CI](/sk/guide/running#in-ci).

@@ -5,6 +5,8 @@ import type { HeadConfig, PageData } from 'vitepress'
 
 export const siteUrl = 'https://tomaj.github.io/payment-simulator/'
 export const ogImage = `${siteUrl}og.png`
+// Slovak pages get the social card with the Slovak tagline.
+export const ogImageSk = `${siteUrl}og-sk.png`
 const siteName = 'payment-simulator'
 const repoUrl = 'https://github.com/tomaj/payment-simulator'
 
@@ -98,6 +100,7 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
   const locale = localeOf(page.relativePath)
   const sk = locale.prefix === 'sk/'
   const isHome = page.frontmatter.layout === 'home'
+  const image = sk ? ogImageSk : ogImage
   const homeTitle = sk ? 'payment-simulator – simulátor platobných brán slovenských bánk' : 'payment-simulator - test Slovak bank payment gateways'
   const title = isHome ? homeTitle : `${page.title} | ${siteName}`
   const description = page.description || page.frontmatter.description || siteDescription
@@ -112,14 +115,14 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
     ['meta', { property: 'og:title', content: title }],
     ['meta', { property: 'og:description', content: description }],
     ['meta', { property: 'og:url', content: url }],
-    ['meta', { property: 'og:image', content: ogImage }],
+    ['meta', { property: 'og:image', content: image }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { property: 'og:image:alt', content: sk ? 'payment-simulator: podpísaná požiadavka otvorí simulovanú platobnú stránku, ktorá odpovie podpísaným návratom OK, FAIL alebo TOUT' : 'payment-simulator: a signed request opens the simulated payment page, which answers with signed OK, FAIL and TOUT returns' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: title }],
     ['meta', { name: 'twitter:description', content: description }],
-    ['meta', { name: 'twitter:image', content: ogImage }],
+    ['meta', { name: 'twitter:image', content: image }],
     ['meta', { name: 'author', content: person.name }],
   ]
   if (modified && !isHome) head.push(['meta', { property: 'article:modified_time', content: modified }])
@@ -145,7 +148,7 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
       runtimePlatform: 'PHP 8.4',
       license: 'https://opensource.org/licenses/MIT',
       author: { '@id': person['@id'] },
-      image: ogImage,
+      image,
     })
   } else {
     graph.push({
@@ -156,7 +159,7 @@ export function seoHead(page: PageData, srcDir: string, siteDescription: string)
       url,
       mainEntityOfPage: url,
       inLanguage: locale.lang,
-      image: ogImage,
+      image,
       author: { '@id': person['@id'] },
       isPartOf: { '@id': `${siteUrl}#website` },
       about: { '@type': 'SoftwareSourceCode', name: siteName, codeRepository: repoUrl },

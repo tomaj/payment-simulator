@@ -4,7 +4,7 @@
 The hero and the diagram are written in English and in Slovak (`-sk` files, used by the pages under docs/sk/).
 
 Each drawing exists once, with colour tokens; the light and dark files only swap the palette. Run it after a change,
-then `node scripts/og-image.mjs` for the PNG icons and og.png (or `npm run images` for both).
+then `node scripts/og-image.mjs` for the PNG icons, og.png and og-sk.png (or `npm run images` for both).
 
 payment-simulator belongs to the visual family of the omnipay-* packages (a rounded square with a payment card, see
 omnipay-tatra's docs/scripts/illustrations.py). It simulates several banks, so its square is a neutral slate and the
@@ -66,8 +66,8 @@ def hero_body(c: dict[str, str], t: dict[str, str]) -> str:
     """The simulator's payment page between a signed request coming in and three signed answers going back."""
     chips = ""
     for i, (label, color) in enumerate(zip(["TatraPay", "CardPay", "e-platby", "SporoPay"], [BANKS[0], BANKS[0], BANKS[1], BANKS[2]])):
-        x = 120 + i * 76
-        chips += f'<rect x="{x}" y="70" width="70" height="22" rx="11" fill="{c["bar"]}" stroke="{c["line"]}"/>'
+        x = 120 + i * 80
+        chips += f'<rect x="{x}" y="70" width="74" height="22" rx="11" fill="{c["bar"]}" stroke="{c["line"]}"/>'
         chips += f'<circle cx="{x + 12}" cy="81" r="4.5" fill="{color}"/>'
         chips += f'<text x="{x + 21}" y="85.5" {FONT} font-size="10.5" fill="{c["muted"]}">{label}</text>'
     return f"""
@@ -121,8 +121,18 @@ def hero(c: dict[str, str], t: dict[str, str]) -> str:
 """
 
 
-def og(c: dict[str, str]) -> str:
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="{NAME}: test Slovak bank payment gateways without the bank">
+# The social card text per language: og.svg (English) and og-sk.svg (pages under docs/sk/).
+OG = {
+    "": {"label": "test Slovak bank payment gateways without the bank",
+         "line1": "Slovak bank payment gateways,", "line2": "without the bank and without money"},
+    "-sk": {"label": "testujte platobné brány slovenských bánk bez banky",
+            "line1": "Platobné brány slovenských bánk", "line2": "bez banky a bez peňazí"},
+}
+
+
+def og(c: dict[str, str], suffix: str = "") -> str:
+    t = OG[suffix]
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="{NAME}: {t['label']}">
   <rect width="1200" height="630" fill="{c['bg']}"/>
   {''.join(f'<rect x="{i * 300}" y="0" width="300" height="14" fill="{color}"/>' for i, color in enumerate(BANKS))}
   {DEFS.format(arrow=c['arrow'])}
@@ -130,11 +140,11 @@ def og(c: dict[str, str]) -> str:
   {mark(c)}
   </g>
   <text x="80" y="370" {FONT} font-size="64" font-weight="800" fill="{c['ink']}">{NAME}</text>
-  <text x="80" y="432" {FONT} font-size="34" fill="{c['muted']}">Slovak bank payment gateways,</text>
-  <text x="80" y="476" {FONT} font-size="34" fill="{c['muted']}">without the bank and without money</text>
+  <text x="80" y="432" {FONT} font-size="34" fill="{c['muted']}">{t['line1']}</text>
+  <text x="80" y="476" {FONT} font-size="34" fill="{c['muted']}">{t['line2']}</text>
   <text x="80" y="566" {MONO} font-size="24" fill="{c['ink']}">TatraPay · CardPay · ComfortPay · e-platby · SporoPay</text>
   <g transform="translate(720 80) scale(0.9)">
-  {hero_body(c, HERO[""])}
+  {hero_body(c, HERO[suffix])}
   </g>
 </svg>
 """
@@ -197,7 +207,7 @@ DIAGRAMS = {
             [
                 (1, 0, "302 / POST form", "signed with the test key"),
                 (0, 2, "GET /payment/…", "MID AMT CURR VS RURL … HMAC"),
-                (2, None, "recompute the signature", "Sign OK · Wrong sign · Missing parameters"),
+                (2, None, "recompute the signature", "Sign OK or Wrong sign"),
                 (2, 0, "continue ok | fail | timeout", "the customer picks the bank's answer"),
                 (0, 1, "GET rurl?VS=…&amp;RES=…", "signed like the bank signs it"),
                 (1, None, "completePurchase()", "verify, then mark the order"),
@@ -212,7 +222,7 @@ DIAGRAMS = {
             [
                 (1, 0, "302 / POST formulár", "podpísané testovacím kľúčom"),
                 (0, 2, "GET /payment/…", "MID AMT CURR VS RURL … HMAC"),
-                (2, None, "prepočíta podpis", "Sign OK · Wrong sign · Missing parameters"),
+                (2, None, "prepočíta podpis", "Sign OK alebo Wrong sign"),
                 (2, 0, "continue ok | fail | timeout", "zákazník zvolí odpoveď banky"),
                 (0, 1, "GET rurl?VS=…&amp;RES=…", "podpísané tak, ako podpisuje banka"),
                 (1, None, "completePurchase()", "overiť, potom označiť objednávku"),
@@ -235,7 +245,8 @@ def main() -> None:
     for suffix, strings in HERO.items():
         write(PUBLIC / "illustrations" / f"hero{suffix}-light.svg", hero(LIGHT, strings))
         write(PUBLIC / "illustrations" / f"hero{suffix}-dark.svg", hero(DARK, strings))
-    write(PUBLIC / "og.svg", og(LIGHT))
+    for suffix in OG:
+        write(PUBLIC / f"og{suffix}.svg", og(LIGHT, suffix))
     for suffix, diagrams in DIAGRAMS.items():
         for name, (title, desc, lanes, steps) in diagrams.items():
             write(PUBLIC / "diagrams" / f"{name}{suffix}-light.svg", sequence(LIGHT, title, desc, lanes, steps))
