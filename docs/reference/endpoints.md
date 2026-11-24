@@ -16,8 +16,8 @@ URL, **Wrong sign**, or **Missing parameters** (HTTP 400). See [How it works](/g
 | Method and URL | Gateway | Key | Required parameters | Signature: signed fields | Return signed over |
 |---|---|---|---|---|---|
 | `GET /payment/tatrapay-hmac` | [TatraPay](/banks/tatrapay#hmac-get-payment-tatrapay-hmac) | HMAC | `MID AMT CURR VS RURL TIMESTAMP`, *`SS CS REM`* | `HMAC`: MID AMT CURR VS SS CS RURL REM TIMESTAMP | AMT CURR VS SS CS RES TID TIMESTAMP |
-| `GET /payment/tatrapay-aes256` | [TatraPay](/banks/tatrapay#aes-get-payment-tatrapay-aes256) | AES | `MID AMT CURR VS RURL`, *`SS CS`* | `SIGN`: MID AMT CURR VS SS CS RURL | VS RES |
-| `GET /payment/tatrapay-des` | [TatraPay](/banks/tatrapay#des-get-payment-tatrapay-des) | DES | as AES | as AES | VS RES |
+| `GET /payment/tatrapay-aes256` | [TatraPay](/banks/tatrapay#aes-get-payment-tatrapay-aes256) | AES | `MID AMT CURR VS RURL`, *`SS CS`* | `SIGN`: MID AMT CURR VS SS CS RURL | VS SS RES |
+| `GET /payment/tatrapay-des` | [TatraPay](/banks/tatrapay#des-get-payment-tatrapay-des) | DES | as AES | as AES | VS SS RES |
 | `GET /payment/cardpay-hmac` | [CardPay](/banks/cardpay#hmac-get-payment-cardpay-hmac) | HMAC | `MID AMT CURR VS RURL IPC NAME TIMESTAMP`, *`REM`* | `HMAC`: MID AMT CURR VS RURL IPC NAME REM TIMESTAMP | AMT CURR VS TXN RES AC TRES CID CC TID TIMESTAMP |
 | `GET /payment/cardpay-aes256` | [CardPay](/banks/cardpay#aes-get-payment-cardpay-aes256-and-des-get-payment-cardpay-des) | AES | `MID AMT CURR VS RURL IPC NAME`, *`CS`* | `SIGN`: MID AMT CURR VS CS RURL IPC NAME | VS RES AC |
 | `GET /payment/cardpay-des` | CardPay | DES | as AES | as AES | VS RES AC |

@@ -10,7 +10,8 @@ use App\Model\Sign\Aes256Sign;
 
 /**
  * TatraPay: the request is signed over MID AMT CURR VS SS CS RURL (an empty SS or CS adds nothing),
- * the return URL over VS RES.
+ * the return URL over VS SS RES (Tatra banka, TatraPay technical manual 3.3).
+ * Without SS the base strings are VS RES.
  */
 final readonly class TatraPayAES256Sign implements GatewaySign
 {
@@ -34,7 +35,7 @@ final readonly class TatraPayAES256Sign implements GatewaySign
     #[\Override]
     public function returnUrlSign(string $result): string
     {
-        $sign = new Aes256Sign()->sign("{$this->vs}{$result}", $this->sharedSecret);
+        $sign = new Aes256Sign()->sign("{$this->vs}{$this->ss}{$result}", $this->sharedSecret);
 
         return ReturnUrl::append($this->rurl, "VS={$this->vs}" . ($this->ss !== '' ? "&SS={$this->ss}" : '') . "&RES={$result}&SIGN={$sign}");
     }

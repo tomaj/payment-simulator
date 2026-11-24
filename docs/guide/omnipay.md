@@ -45,7 +45,6 @@ omnipay-vub and omnipay-slsp.
 | Gateway | Difference | Effect on your tests |
 |---|---|---|
 | TatraPay HMAC | no `TID` in the return | the transaction id is empty |
-| TatraPay AES / DES | the return is signed over `VS RES`, omnipay-tatra 5 verifies `VS SS RES` | with a specific symbol (`ss`) the AES/DES return fails verification; leave `ss` empty with those keys |
 | CardPay | fixed `AC=111111`, `CC=1111********1111`, no `TID` and `RC` | test only that you store them |
 | CardPay authorize | `TID=567898`, `CID=123456`, `AC=31232` only with `TPAY=Y` and `RES=OK` | pass `tpay` `Y` to get a transaction id for `cancelAuthorize()` |
 | ComfortPay | fixed card id `CID=111111`, `RC=123` | |

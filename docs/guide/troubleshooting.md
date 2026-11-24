@@ -33,8 +33,9 @@ the server with `OPENSSL_CONF=docker/php/openssl-legacy.cnf`.
 
 ## My library rejects the simulator's answer
 
-- **omnipay-tatra 5 with an AES or DES key and `ss`**: the simulator signs the TatraPay return over `VS RES`, the
-  library verifies `VS SS RES`. Leave `ss` empty in test mode with those keys.
+- **A specific symbol on the return**: TatraPay and VÚB e-platby sign `SS` in the return (`VS SS RES` for TatraPay AES
+  and DES and for e-platby). Pass the same `ss` to `completePurchase()` as to `purchase()`; omnipay-tatra 4.x verifies
+  the AES/DES return over `VS RES` and rejects it when `ss` is set, use omnipay-tatra 5.
 - **Another amount or currency**: the HMAC return is signed over the amount and currency of the request; verify with
   the same values.
 - **A changed variable symbol**: the libraries reject a return for another order than the one you pass.

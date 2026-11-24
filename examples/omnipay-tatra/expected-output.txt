@@ -2,6 +2,14 @@ TatraPay: /payment/tatrapay-hmac -> Sign OK
   ok       successful
   fail     not successful
   timeout  pending
+TatraPay with SS: /payment/tatrapay-hmac -> Sign OK
+  ok       successful
+  fail     not successful
+  timeout  pending
+TatraPay AES with SS: /payment/tatrapay-aes256 -> Sign OK
+  ok       successful
+  fail     not successful
+  timeout  pending
 CardPay: /payment/cardpay-hmac -> Sign OK
   ok       successful
   fail     not successful
