@@ -58,8 +58,8 @@ The whole script and its output are the [plain PHP example](/examples/plain-php)
 
 ## With an Omnipay gateway
 
-The [omnipay-tatra](https://tomaj.github.io/omnipay-tatra/), [omnipay-vub](https://github.com/tomaj/omnipay-vub) and
-[omnipay-slsp](https://github.com/tomaj/omnipay-slsp) gateways send their payments to the simulator in test mode;
+The [omnipay-tatra](https://tomaj.github.io/omnipay-tatra/), [omnipay-vub](https://tomaj.github.io/omnipay-vub/) and
+[omnipay-slsp](https://tomaj.github.io/omnipay-slsp/) gateways send their payments to the simulator in test mode;
 set `testHost` to your instance:
 
 <<< @/../examples/omnipay-tatra/run.php#config

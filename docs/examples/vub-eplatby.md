@@ -6,7 +6,7 @@ description: omnipay-vub against payment-simulator - the e-platby form POST and 
 # VÚB e-platby
 
 VÚB e-platby is the only simulated gateway that receives a form POST. The example uses
-[omnipay-vub](https://github.com/tomaj/omnipay-vub) in test mode.
+[omnipay-vub](https://tomaj.github.io/omnipay-vub/) in test mode.
 
 Source: [`examples/vub-eplatby/run.php`](https://github.com/tomaj/payment-simulator/blob/master/examples/vub-eplatby/run.php) ·
 run it with `examples/ci/example.sh vub-eplatby`.

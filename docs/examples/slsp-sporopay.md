@@ -6,7 +6,7 @@ description: omnipay-slsp against payment-simulator - the 3DES-signed SporoPay r
 # SLSP SporoPay
 
 SporoPay signs with 3DES over fields joined by semicolons. The example uses
-[omnipay-slsp](https://github.com/tomaj/omnipay-slsp) in test mode.
+[omnipay-slsp](https://tomaj.github.io/omnipay-slsp/) in test mode.
 
 Source: [`examples/slsp-sporopay/run.php`](https://github.com/tomaj/payment-simulator/blob/master/examples/slsp-sporopay/run.php) ·
 run it with `examples/ci/example.sh slsp-sporopay`.

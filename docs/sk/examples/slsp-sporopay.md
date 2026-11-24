@@ -6,7 +6,7 @@ description: omnipay-slsp proti simulátoru payment-simulator - presmerovanie Sp
 # SLSP SporoPay
 
 SporoPay podpisuje cez 3DES polia spojené bodkočiarkami. Príklad používa
-[omnipay-slsp](https://github.com/tomaj/omnipay-slsp) v testovacom režime.
+[omnipay-slsp](https://tomaj.github.io/omnipay-slsp/sk/) v testovacom režime.
 
 Zdrojový kód: [`examples/slsp-sporopay/run.php`](https://github.com/tomaj/payment-simulator/blob/master/examples/slsp-sporopay/run.php) ·
 spustíte ho príkazom `examples/ci/example.sh slsp-sporopay`.

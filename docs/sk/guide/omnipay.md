@@ -13,8 +13,8 @@ Simulátor vznikol pre brány `tomaj/omnipay-*`. V testovacom režime posielajú
 | [omnipay-tatra](https://tomaj.github.io/omnipay-tatra/sk/) | `TatraPay` | HMAC, AES alebo DES | `/payment/tatrapay-hmac`, `-aes256`, `-des` |
 | | `CardPay` | HMAC, AES alebo DES | `/payment/cardpay-hmac`, `-aes256`, `-des`; `authorize()`: `/payment/cardpay-authorize-hmac`; `cancelAuthorize()`: `/payment/cardpay-cancel-purchase` |
 | | `ComfortPay` | HMAC alebo AES | `/payment/comfortpay-hmac`, `-aes256`; webovú službu SOAP v testovacom režime odpovedá samotná knižnica |
-| [omnipay-vub](https://github.com/tomaj/omnipay-vub) | `Eplatby` | e-platby | `/payment/eplatby-hmac` (odoslanie formulára POST) |
-| [omnipay-slsp](https://github.com/tomaj/omnipay-slsp) | `SporoPay` | SporoPay | `/payment/sporopay-des` |
+| [omnipay-vub](https://tomaj.github.io/omnipay-vub/sk/) | `Eplatby` | e-platby | `/payment/eplatby-hmac` (odoslanie formulára POST) |
+| [omnipay-slsp](https://tomaj.github.io/omnipay-slsp/sk/) | `SporoPay` | SporoPay | `/payment/sporopay-des` |
 
 ## Nastavenie brány {#configure-the-gateway}
 
