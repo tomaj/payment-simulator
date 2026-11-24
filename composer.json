@@ -44,7 +44,7 @@
 		"nette/utils": "^4.0",
 		"php-http/guzzle7-adapter": "^1.0",
 		"tomaj/omnipay-slsp": "^3.0",
-		"tomaj/omnipay-tatra": "^4.0",
+		"tomaj/omnipay-tatra": "dev-master",
 		"tomaj/omnipay-vub": "^3.0",
 		"tracy/tracy": "^2.10"
 	},

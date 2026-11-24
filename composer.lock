@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "180f326ee7fc48680106dfa61c8a8ecf",
+    "content-hash": "1bb0f1bbc9ca91924e48a8c4c0b336e2",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -2567,16 +2567,16 @@
         },
         {
             "name": "tomaj/omnipay-tatra",
-            "version": "4.3.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tomaj/omnipay-tatra.git",
-                "reference": "3cfdb44f78e5d986cffb62ac579eab4346c952bf"
+                "reference": "68efdf25998715ccc70147f8b135eacf2f3c4a70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tomaj/omnipay-tatra/zipball/3cfdb44f78e5d986cffb62ac579eab4346c952bf",
-                "reference": "3cfdb44f78e5d986cffb62ac579eab4346c952bf",
+                "url": "https://api.github.com/repos/tomaj/omnipay-tatra/zipball/68efdf25998715ccc70147f8b135eacf2f3c4a70",
+                "reference": "68efdf25998715ccc70147f8b135eacf2f3c4a70",
                 "shasum": ""
             },
             "require": {
@@ -2584,12 +2584,23 @@
                 "ext-openssl": "*",
                 "ext-simplexml": "*",
                 "ext-soap": "*",
-                "omnipay/common": "~3.0"
+                "omnipay/common": "^3.4",
+                "php": "^8.4"
             },
             "require-dev": {
-                "omnipay/tests": "~3.0|^4.0",
-                "squizlabs/php_codesniffer": "3.*"
+                "friendsofphp/php-cs-fixer": "^3.90",
+                "guzzlehttp/psr7": "^2.7",
+                "infection/infection": "^0.35",
+                "php-http/guzzle7-adapter": "^1.0",
+                "php-http/mock-client": "^1.6",
+                "phpstan/phpstan": "^2.3",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0.5",
+                "phpstan/phpstan-strict-rules": "^2.1",
+                "phpunit/phpunit": "^13.2",
+                "rector/rector": "^2.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -2603,11 +2614,12 @@
             "authors": [
                 {
                     "name": "Tomas Majer",
-                    "email": "tomasmajer@gmail.com"
+                    "email": "tomasmajer@gmail.com",
+                    "homepage": "http://www.tomaj.sk/"
                 }
             ],
-            "description": "Tatrabank driver for the Omnipay payment processing library",
-            "homepage": "https://github.com/tomaj/omnipay-tatra",
+            "description": "Tatra banka (TatraPay, CardPay, ComfortPay) gateways for the Omnipay payment processing library",
+            "homepage": "https://tomaj.github.io/omnipay-tatra/",
             "keywords": [
                 "cardpay",
                 "comfortpay",
@@ -2616,13 +2628,17 @@
                 "omnipay",
                 "pay",
                 "payment",
+                "slovakia",
+                "tatrabanka",
                 "tatrapay"
             ],
             "support": {
+                "docs": "https://tomaj.github.io/omnipay-tatra/",
                 "issues": "https://github.com/tomaj/omnipay-tatra/issues",
-                "source": "https://github.com/tomaj/omnipay-tatra/tree/4.3.0"
+                "security": "https://github.com/tomaj/omnipay-tatra/security/policy",
+                "source": "https://github.com/tomaj/omnipay-tatra"
             },
-            "time": "2024-10-21T20:05:03+00:00"
+            "time": "2026-11-24T07:06:24+00:00"
         },
         {
             "name": "tomaj/omnipay-vub",
@@ -7495,7 +7511,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "tomaj/omnipay-tatra": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

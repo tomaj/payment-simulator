@@ -6,7 +6,7 @@ namespace App\Model\Gateways\CardPay;
 
 use App\Model\Gateways\GatewaySign;
 use App\Model\Gateways\ReturnUrl;
-use App\Model\Sign\Aes256Sign;
+use App\Model\Sign\LibrarySign;
 
 final readonly class CardPayAES256Sign implements GatewaySign
 {
@@ -31,14 +31,14 @@ final readonly class CardPayAES256Sign implements GatewaySign
     {
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->rem}{$this->ipc}{$this->name}";
 
-        return new Aes256Sign()->sign($base, $this->sharedSecret);
+        return LibrarySign::tatraAes($base, $this->sharedSecret);
     }
 
     #[\Override]
     public function returnUrlSign(string $result): string
     {
         $ac = self::AC;
-        $sign = new Aes256Sign()->sign("{$this->vs}{$result}{$ac}", $this->sharedSecret);
+        $sign = LibrarySign::tatraAes("{$this->vs}{$result}{$ac}", $this->sharedSecret);
 
         return ReturnUrl::append($this->rurl, "VS={$this->vs}&AC={$ac}&RES={$result}&SIGN={$sign}");
     }
