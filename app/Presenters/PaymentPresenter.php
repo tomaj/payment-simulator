@@ -324,8 +324,8 @@ final class PaymentPresenter extends Presenter
 
         if ($isTds) {
             $timestamp = date('dmYHis');
-            $url = $httpRequest->getUrl();
-            $action = htmlspecialchars("{$url->getScheme()}://{$url->getHost()}/cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds");
+            // scheme, host and a non-default port of this request, so the form also works on http://127.0.0.1:8080
+            $action = htmlspecialchars($httpRequest->getUrl()->getHostUrl() . '/cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds');
             $tdsTermUrl = htmlspecialchars(is_string($body['tdsTermUrl'] ?? null) ? $body['tdsTermUrl'] : '');
             $data['tdsRedirectionFormHtml'] = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>3D Secure
 Processing</title></head><body><form action=\"{$action}\" method=\"POST\" name=\"redirectionForm\">

@@ -116,6 +116,22 @@ final class CardPayApiTest extends AppTestCase
         self::assertStringContainsString('name="processingId" value="' . $data['processingId'] . '"', $form);
     }
 
+    public function testDirectApiTdsFormKeepsThePort(): void
+    {
+        $body = '{"amount":1000,"googlePayToken":"x","tdsTermUrl":"https://shop.example/tds"}';
+        $result = $this->request(
+            'POST',
+            '/cgi-bin/e-commerce/start/api/cardpay/transaction',
+            headers: ['Authorization' => 'HMAC=' . $this->hmac($body)],
+            body: $body,
+            host: 'http://127.0.0.1:8080',
+        );
+
+        $form = $this->json($result)['tdsRedirectionFormHtml'];
+        self::assertIsString($form);
+        self::assertStringContainsString('action="http://127.0.0.1:8080/cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds"', $form);
+    }
+
     public function testDirectApiGooglePayBelow10(): void
     {
         self::assertSame('OK', $this->json($this->postTransaction('{"amount":999,"googlePayToken":"x"}'))['status']);
