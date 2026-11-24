@@ -1,12 +1,20 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://tomaj.github.io/payment-simulator/logo-dark.svg">
+  <img src="https://tomaj.github.io/payment-simulator/logo.svg" alt="payment-simulator logo" width="88" align="right">
+</picture>
+
 # Payment Simulator
 
 **Simulator of Slovak bank online payment gateways (TatraPay, CardPay, ComfortPay, VÚB ePlatby, SLSP SporoPay) for testing shop integrations**
 
-Live instance: **https://platby.tomaj.sk/**
+**Documentation: https://tomaj.github.io/payment-simulator/** · Live instance: **https://platby.tomaj.sk/**
+
+[Getting started](https://tomaj.github.io/payment-simulator/guide/getting-started) · [Banks](https://tomaj.github.io/payment-simulator/banks/) · [Endpoints](https://tomaj.github.io/payment-simulator/reference/endpoints) · [Examples](https://tomaj.github.io/payment-simulator/examples/)
 
 [![CI](https://github.com/tomaj/payment-simulator/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/tomaj/payment-simulator/actions/workflows/ci.yml?query=branch%3Amaster)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%20max-brightgreen.svg)](https://phpstan.org/)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/tomaj/payment-simulator/badge)](https://scorecard.dev/viewer/?uri=github.com/tomaj/payment-simulator)
+[![Documentation](https://img.shields.io/badge/docs-site-0891b2.svg)](https://tomaj.github.io/payment-simulator/)
 [![License](https://img.shields.io/github/license/tomaj/payment-simulator.svg)](LICENSE.md)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.4-777bb4.svg)](composer.json)
 
@@ -40,6 +48,8 @@ Requirements: PHP 8.4, 8.5 or 8.6 with `openssl`, Composer.
 composer install
 OPENSSL_CONF=docker/php/openssl-legacy.cnf php -S 127.0.0.1:8080 -t www www/index.php
 ```
+
+`examples/ci/serve.sh` does the same in the background, installs the dependencies when `vendor/` is missing and waits until the simulator answers; the [examples](examples/) and other repositories' CI use it.
 
 `OPENSSL_CONF` is only needed for the DES gateways (single DES is in the OpenSSL 3 legacy provider). `log/` and `temp/` must be writable.
 

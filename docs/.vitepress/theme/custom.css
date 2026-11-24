@@ -1,0 +1,139 @@
+/*
+ * payment-simulator: neutral slate with a cyan accent; the card stripe of the logo carries the simulated banks'
+ * colours. Same layout as the omnipay-* packages (omnipay-tatra sets the family).
+ */
+:root {
+  --ps-primary: #1e293b;
+  --ps-accent: #0891b2;
+  --ps-soft: #e0f2fe;
+
+  --vp-c-brand-1: #0e7490;
+  --vp-c-brand-2: #0891b2;
+  --vp-c-brand-3: #0e7490;
+  --vp-c-brand-soft: rgba(8, 145, 178, 0.14);
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #1e293b 25%, #0891b2 100%);
+  --vp-home-hero-image-background-image: radial-gradient(circle at 50% 50%, rgba(8, 145, 178, 0.28), rgba(8, 145, 178, 0) 68%);
+  --vp-home-hero-image-filter: blur(44px);
+
+  --vp-code-color: #0e5a6e;
+}
+
+.dark {
+  --ps-primary: #e2e8f0;
+  --ps-accent: #22d3ee;
+  --ps-soft: rgba(34, 211, 238, 0.12);
+
+  --vp-c-brand-1: #22d3ee;
+  --vp-c-brand-2: #06b6d4;
+  --vp-c-brand-3: #0e7490;
+  --vp-c-brand-soft: rgba(34, 211, 238, 0.14);
+
+  --vp-home-hero-name-background: linear-gradient(120deg, #e2e8f0 20%, #22d3ee 100%);
+  --vp-home-hero-image-background-image: radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.18), rgba(34, 211, 238, 0) 68%);
+
+  --vp-code-color: #a5f3fc;
+}
+
+/* the hero illustration carries text: give it more room than the default 192/256/320 px */
+@media (max-width: 959px) {
+  /* the default negative margins would pull the larger image over the title */
+  .VPHero .image {
+    margin: -24px -24px 16px;
+  }
+}
+.VPHero .image-container {
+  width: 300px;
+  height: 260px;
+}
+.VPHero .image-src {
+  max-width: 300px;
+  max-height: 260px;
+}
+@media (min-width: 640px) {
+  .VPHero .image-container {
+    width: 400px;
+    height: 340px;
+  }
+  .VPHero .image-src {
+    max-width: 400px;
+    max-height: 340px;
+  }
+}
+@media (min-width: 960px) {
+  .VPHero .image-container {
+    width: 480px;
+    height: 420px;
+  }
+  .VPHero .image-src {
+    max-width: 480px;
+    max-height: 420px;
+  }
+}
+
+/* links inside text stay readable on white: dark gold, underlined on hover */
+.vp-doc a {
+  text-underline-offset: 3px;
+}
+
+/* feature icons: inline SVGs drawn with these classes, so one icon serves both themes */
+.ps-icon .ps-soft { fill: var(--ps-soft); }
+.ps-icon .ps-ink { fill: none; stroke: var(--vp-c-text-1); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ps-icon .ps-ink-f { fill: var(--vp-c-text-1); }
+.ps-icon .ps-acc { fill: var(--ps-accent); stroke: var(--vp-c-text-1); stroke-width: 2.2; stroke-linejoin: round; }
+.ps-icon .ps-mark { fill: none; stroke: #ffffff; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.VPFeature .icon {
+  background-color: var(--ps-soft);
+  width: 56px;
+  height: 56px;
+}
+
+/* "Where to go next" cards on the home page */
+.ps-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 16px 0 8px;
+}
+.ps-cards a {
+  display: block;
+  padding: 16px 18px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+.ps-cards a:hover {
+  border-color: var(--vp-c-brand-1);
+}
+.ps-cards strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.ps-cards span {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* diagrams: the light or the dark SVG */
+.ps-diagram {
+  margin: 20px auto;
+  max-width: 720px;
+}
+.ps-diagram img {
+  width: 100%;
+  height: auto;
+}
+.ps-diagram .dark-only,
+.dark .ps-diagram .light-only {
+  display: none;
+}
+.dark .ps-diagram .dark-only {
+  display: block;
+}
+.dark .ps-icon .ps-mark { stroke: #0f172a; }

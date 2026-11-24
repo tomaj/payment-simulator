@@ -1,0 +1,25 @@
+{
+    "name": "tomaj/payment-simulator-example-omnipay-tatra",
+    "description": "payment-simulator example: omnipay-tatra",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.4",
+        "tomaj/omnipay-tatra": "dev-master",
+        "php-http/guzzle7-adapter": "^1.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/tomaj/omnipay-tatra.git",
+            "no-api": true
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

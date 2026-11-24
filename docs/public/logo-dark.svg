@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="payment-simulator">
+  <title>payment-simulator</title>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#e2e8f0"/>
+  <rect x="11" y="17" width="42" height="30" rx="5" fill="#1e293b"/>
+  <rect x="11" y="23" width="10.5" height="6" fill="#ffd200"/><rect x="21.5" y="23" width="10.5" height="6" fill="#0062ae"/><rect x="32" y="23" width="10.5" height="6" fill="#e30613"/><rect x="42.5" y="23" width="10.5" height="6" fill="#16a34a"/>
+  <path d="M17 39h11" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M37 39.5l4.5 4 8-9" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

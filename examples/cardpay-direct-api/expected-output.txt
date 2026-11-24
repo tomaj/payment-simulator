@@ -1,0 +1,7 @@
+Apple Pay, 24.90   -> OK, response code 00
+Google Pay, 5.00   -> OK, response code 00
+Google Pay, 24.90  -> TDS_AUTH_REQUIRED, response code 00
+  3-D Secure: /cgi-bin/e-commerce/start/api/form/cardpay/transaction/tds -> https://shop.example/3ds-done
+  check transaction: OK
+Apple Pay, 150.00  -> FAIL, response code 00
+wrong request signature -> HTTP/1.1 400 Bad Request: {"error":"Invalid authorization header"}
