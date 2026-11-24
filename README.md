@@ -90,7 +90,7 @@ Every payment page shows the received and the computed signature and the paramet
 | URL | Gateway | Parameters | Signature parameter: signed fields | Return URL |
 |---|---|---|---|---|
 | `GET /payment/tatrapay-hmac` | TatraPay, HMAC | `MID`, `AMT`, `CURR`, `VS`, *`SS`*, *`CS`*, `RURL`, *`REM`*, `TIMESTAMP` | `HMAC`: MID AMT CURR VS SS CS RURL REM TIMESTAMP | `VS`, *`SS`*, `RES`, `AMT`, `CURR`, `CS`, `TIMESTAMP`, `HMAC` over AMT CURR VS SS CS RES TIMESTAMP |
-| `GET /payment/tatrapay-aes256` | TatraPay, AES | `MID`, `AMT`, `CURR`, `VS`, *`SS`*, *`CS`*, `RURL` | `SIGN`: MID AMT CURR VS SS CS RURL | `VS`, *`SS`*, `RES`, `SIGN` over VS RES |
+| `GET /payment/tatrapay-aes256` | TatraPay, AES | `MID`, `AMT`, `CURR`, `VS`, *`SS`*, *`CS`*, `RURL` | `SIGN`: MID AMT CURR VS SS CS RURL | `VS`, *`SS`*, `RES`, `SIGN` over VS SS RES |
 | `GET /payment/tatrapay-des` | TatraPay, DES | as AES | as AES | as AES |
 | `GET /payment/cardpay-hmac` | CardPay, HMAC | `MID`, `AMT`, `CURR`, `VS`, `RURL`, `IPC`, `NAME`, *`REM`*, `TIMESTAMP` | `HMAC`: MID AMT CURR VS RURL IPC NAME REM TIMESTAMP | `VS`, `TXN`, `RES`, `TRES`, `AC`, `AMT`, `CURR`, `CID`, `CC`, `TIMESTAMP`, `HMAC` over AMT CURR VS TXN RES AC TRES CID CC TID TIMESTAMP |
 | `GET /payment/cardpay-aes256` | CardPay, AES | `MID`, `AMT`, `CURR`, `VS`, *`CS`*, `RURL`, `IPC`, `NAME` | `SIGN`: MID AMT CURR VS CS RURL IPC NAME | `VS`, `AC`, `RES`, `SIGN` over VS RES AC |

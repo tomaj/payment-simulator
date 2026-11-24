@@ -47,19 +47,16 @@ Key: `1` × 64.
 **Signed request:** `MID AMT CURR VS SS CS RURL`: the first 16 bytes of SHA-1, AES-128-ECB with the first 16 bytes of
 the key, the first 32 hex characters, uppercase.
 
-**Return:** `RURL?VS=…[&SS=…]&RES=OK|FAIL|TOUT&SIGN=…`, signed over `VS RES`.
-
-::: warning SS on AES and DES returns
-The return signature does not include `SS`, while omnipay-tatra 5 verifies `VS SS RES`. With a specific symbol the
-library rejects the simulator's AES/DES return; leave `SS` empty with these keys.
-:::
+**Return:** `RURL?VS=…[&SS=…]&RES=OK|FAIL|TOUT&SIGN=…`, signed over `VS SS RES` (an empty `SS` adds nothing), as
+Tatra banka's *Technická príručka k službe TatraPay* (version 3.3) specifies. omnipay-tatra 5 verifies the same string;
+omnipay-tatra 4.x verifies `VS RES` and rejects a return with `SS`.
 
 ## DES: `GET /payment/tatrapay-des`
 
 Key: `11111111`. Parameters and signed fields as AES; the signature is SHA-1 encrypted with DES-ECB, the first 16 hex
 characters, uppercase. Needs the OpenSSL legacy provider ([Running it](/guide/running#local-php)).
 
-**Return:** as AES, signed with DES over `VS RES`.
+**Return:** as AES, signed with DES over `VS SS RES`.
 
 ## Results
 

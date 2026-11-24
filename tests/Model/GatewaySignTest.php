@@ -74,15 +74,15 @@ final class GatewaySignTest extends TestCase
             static fn(): GatewaySign => new TatraPayAES256Sign(PaymentPresenter::AES_KEY, '9999', '10.50', '978', '1234567890', '0308', $r, '77'),
             false,
             '5C15143CA563C10471B0A23C652DD80F',
-            'OK', // base 1234567890 OK
-            "{$r}&VS=1234567890&SS=77&RES=OK&SIGN=2BC858513AF8471E9F64B3C614D858EE",
+            'OK', // base 1234567890 77 OK
+            "{$r}&VS=1234567890&SS=77&RES=OK&SIGN=8BDC6461FFFA5999F7384E8197C7F86E",
         ];
         yield 'TatraPay DES with SS' => [
             static fn(): GatewaySign => new TatraPayDESSign(PaymentPresenter::DES_KEY, '9999', '10.50', '978', '1234567890', '0308', $r, '77'),
             true,
             '15D4DD86A987BC0C',
-            'FAIL', // base 1234567890 FAIL
-            "{$r}&VS=1234567890&SS=77&RES=FAIL&SIGN=424F7BF262BAAA25",
+            'FAIL', // base 1234567890 77 FAIL
+            "{$r}&VS=1234567890&SS=77&RES=FAIL&SIGN=5FB2F75988880427",
         ];
         // base 9999 10.50 978 1234567890 77 0308 RURL a@b.sk TIMESTAMP
         yield 'TatraPay HMAC with SS' => [

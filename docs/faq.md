@@ -40,10 +40,12 @@ Your own for automated tests and anything private: it runs with [one command](/g
 public instance at https://platby.tomaj.sk is the default `testHost` of the omnipay gateways and is handy for a quick
 manual try.
 
-## Why do omnipay-tatra's AES/DES returns with a specific symbol fail?
+## Can I send a specific symbol?
 
-The simulator signs the TatraPay AES and DES return over `VS RES`, omnipay-tatra 5 verifies `VS SS RES`. Leave `ss`
-empty with those keys; HMAC returns include `SS` on both sides.
+Yes, with every TatraPay and VÚB e-platby key. `SS` is signed in the request between `VS` and `CS` and comes back in the
+return URL. The TatraPay AES and DES return is signed over `VS SS RES` as in Tatra banka's TatraPay manual, the HMAC
+return over `AMT CURR VS SS CS RES TID TIMESTAMP`; without `SS` it adds nothing. omnipay-tatra 5 verifies the same
+strings ([TatraPay](/banks/tatrapay)).
 
 ## How do I reach the simulator from another container?
 
