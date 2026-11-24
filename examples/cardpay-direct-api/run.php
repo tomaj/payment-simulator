@@ -26,7 +26,7 @@ function call(string $method, string $path, array $headers, string $body = ''): 
     $answer = (string) file_get_contents(simulatorUrl() . $path, false, $context);
 
     $signature = '';
-    foreach ($http_response_header as $header) {
+    foreach (http_get_last_response_headers() ?? [] as $header) {
         if (preg_match('~^Authorization:.*HMAC=([0-9a-f]+)~i', $header, $match) === 1) {
             $signature = $match[1];
         }
@@ -113,5 +113,5 @@ $answer = file_get_contents(simulatorUrl() . '/cgi-bin/e-commerce/start/api/card
     'content' => $body,
     'ignore_errors' => true,
 ]]));
-echo "wrong request signature -> {$http_response_header[0]}: {$answer}\n";
+echo "wrong request signature -> " . (http_get_last_response_headers()[0] ?? "") . ": {$answer}\n";
 // #endregion unsigned

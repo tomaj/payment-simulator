@@ -6,6 +6,7 @@
   --ps-primary: #1e293b;
   --ps-accent: #0891b2;
   --ps-soft: #e0f2fe;
+  --ps-soft-strong: #bae6fd;
 
   --vp-c-brand-1: #0e7490;
   --vp-c-brand-2: #0891b2;
@@ -24,6 +25,7 @@
   --ps-primary: #e2e8f0;
   --ps-accent: #22d3ee;
   --ps-soft: rgba(34, 211, 238, 0.12);
+  --ps-soft-strong: rgba(34, 211, 238, 0.28);
 
   --vp-c-brand-1: #22d3ee;
   --vp-c-brand-2: #06b6d4;
@@ -78,7 +80,7 @@
 }
 
 /* feature icons: inline SVGs drawn with these classes, so one icon serves both themes */
-.ps-icon .ps-soft { fill: var(--ps-soft); }
+.ps-icon .ps-soft { fill: var(--ps-soft-strong); }
 .ps-icon .ps-ink { fill: none; stroke: var(--vp-c-text-1); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .ps-icon .ps-ink-f { fill: var(--vp-c-text-1); }
 .ps-icon .ps-acc { fill: var(--ps-accent); stroke: var(--vp-c-text-1); stroke-width: 2.2; stroke-linejoin: round; }

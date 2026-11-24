@@ -3,5 +3,5 @@
 # compares its output with expected-output.txt.
 set -euo pipefail
 cd "$(dirname "$0")"
-diff -u expected-output.txt <(php run.php)
+diff -u expected-output.txt <(php -d display_errors=stderr run.php)
 echo "ok: cardpay-direct-api"
