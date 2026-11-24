@@ -24,9 +24,9 @@ In PHP: `str_repeat('1', 128)`, `str_repeat('1', 64)`, `'11111111'`.
 
 The algorithms are the banks': HMAC-SHA256 with the hex-decoded key, lowercase hex, for Tatra banka; AES-ECB over the
 first 16 bytes of SHA-1, uppercase hex, for the 64-character key; DES-ECB over SHA-1, uppercase hex, for the 8-character
-key; HMAC-SHA256 with the key as text, uppercase hex, for VÚB; 3DES for SporoPay. The AES and DES signers are copies of
-the ones in omnipay-tatra 4.x (`App\Model\Sign`), the HMAC, e-platby and SporoPay signers come from the omnipay
-libraries (`App\Model\Sign\LibrarySign`).
+key; HMAC-SHA256 with the key as text, uppercase hex, for VÚB; 3DES for SporoPay. Every signer comes from the omnipay
+libraries (`App\Model\Sign\LibrarySign`): the Tatra banka HMAC, AES and DES signers from omnipay-tatra, e-platby from
+omnipay-vub and SporoPay from omnipay-slsp, so the simulator and the clients cannot compute a signature differently.
 
 ## Nette configuration
 

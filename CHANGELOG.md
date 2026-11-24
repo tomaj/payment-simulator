@@ -17,8 +17,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Removed the unused `nette/database`, `nette/caching`, `nette/mail` and `nette/finder` packages and the
   `database` section in `app/config/local.neon` ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
 - `moneyphp/money` (an `omnipay/common` dependency) is held at 3.x because 4.x does not allow PHP 8.6 yet ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
-- The AES and DES signatures use local copies of the omnipay-tatra 4.x signers (`App\Model\Sign`): the library
-  versions call `openssl_random_pseudo_bytes(0)`, which throws on PHP 8 ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
+- The AES and DES signatures use the signers of `tomaj/omnipay-tatra` 5 (`Omnipay\Core\Sign\Aes256Sign`, `DesSign`) through `App\Model\Sign\LibrarySign` instead of local copies of the 4.x signers, which called `openssl_random_pseudo_bytes(0)` and threw on PHP 8. Every signature and return URL is unchanged (old and new output compared on the test vectors). `tomaj/omnipay-tatra` is required as `dev-master` until 5.0.0 is tagged, then as `^5.0`. The library round-trip tests now cover TatraPay, CardPay and ComfortPay with AES and DES keys and TatraPay with a specific symbol on every key type ([#25](https://github.com/tomaj/payment-simulator/issues/25), [#15](https://github.com/tomaj/payment-simulator/pull/15)).
 - DES signing throws a `RuntimeException` when OpenSSL cannot compute it (an empty signature was shown before) ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
 - The Docker image enables the OpenSSL legacy provider (`OPENSSL_CONF`), which single DES needs on OpenSSL 3 ([#15](https://github.com/tomaj/payment-simulator/pull/15)).
 

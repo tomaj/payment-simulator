@@ -42,5 +42,6 @@ successful.
 - every signed answer of the simulator passes omnipay-tatra's verification, so the return signatures agree;
 - `isSuccessful()` and `isPending()` match the result.
 
-The simulator's own PHPUnit suite (`tests/Functional/OmnipayLibrariesTest.php`) does the same with the released
-omnipay libraries.
+The simulator's own PHPUnit suite (`tests/Functional/OmnipayLibrariesTest.php`) does the same in-process with
+omnipay-tatra (HMAC, AES and DES keys, with and without a specific symbol) and the released omnipay-vub and
+omnipay-slsp.

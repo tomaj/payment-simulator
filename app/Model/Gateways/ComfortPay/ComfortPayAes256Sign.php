@@ -6,7 +6,7 @@ namespace App\Model\Gateways\ComfortPay;
 
 use App\Model\Gateways\GatewaySign;
 use App\Model\Gateways\ReturnUrl;
-use App\Model\Sign\Aes256Sign;
+use App\Model\Sign\LibrarySign;
 
 final readonly class ComfortPayAes256Sign implements GatewaySign
 {
@@ -34,7 +34,7 @@ final readonly class ComfortPayAes256Sign implements GatewaySign
     {
         $base = "{$this->mid}{$this->amt}{$this->curr}{$this->vs}{$this->cs}{$this->rurl}{$this->ipc}{$this->name}{$this->tpay}";
 
-        return new Aes256Sign()->sign($base, $this->sharedSecret);
+        return LibrarySign::tatraAes($base, $this->sharedSecret);
     }
 
     #[\Override]
@@ -42,7 +42,7 @@ final readonly class ComfortPayAes256Sign implements GatewaySign
     {
         $ac = self::AC;
         $cid = self::CID;
-        $sign = new Aes256Sign()->sign("{$this->vs}{$result}{$ac}{$cid}", $this->sharedSecret);
+        $sign = LibrarySign::tatraAes("{$this->vs}{$result}{$ac}{$cid}", $this->sharedSecret);
 
         return ReturnUrl::append($this->rurl, "VS={$this->vs}&RES={$result}&TRES={$result}&AC={$ac}&CID={$cid}&SIGN={$sign}");
     }
