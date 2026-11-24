@@ -15,7 +15,7 @@ fi
 mkdir -p "$root/temp" "$root/log"
 
 # the DES endpoints need the OpenSSL 3 legacy provider
-OPENSSL_CONF="$root/docker/php/openssl-legacy.cnf" nohup php -S "${url#http://}" -t "$root/www" "$root/www/index.php" \
+OPENSSL_CONF="$root/docker/php/openssl-legacy.cnf" nohup php -d display_errors=0 -d log_errors=1 -S "${url#http://}" -t "$root/www" "$root/www/index.php" \
     > "$root/log/php-server.log" 2>&1 &
 echo $! > "$root/log/php-server.pid"
 for _ in $(seq 1 50); do

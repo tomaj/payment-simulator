@@ -28,7 +28,7 @@ function cancelAuthorize(array $request, ?string $signature = null): array
     $xml = (string) file_get_contents(simulatorUrl() . '/payment/cardpay-cancel-purchase?' . http_build_query($request));
 
     $authorization = null;
-    foreach ($http_response_header as $header) {
+    foreach (http_get_last_response_headers() ?? [] as $header) {
         if (stripos($header, 'Authorization:') === 0) {
             $authorization = trim(substr($header, 14));
         }

@@ -33,7 +33,7 @@ function openPaymentPage(string $url, array $form = []): array
     if ($html === false) {
         throw new RuntimeException("Cannot open {$url}: is the simulator running at " . simulatorUrl() . '?');
     }
-    preg_match('~^HTTP/\S+ (\d{3})~', $http_response_header[0] ?? '', $status);
+    preg_match('~^HTTP/\S+ (\d{3})~', http_get_last_response_headers()[0] ?? '', $status);
 
     $verdict = 'no verdict';
     foreach (['Sign OK', 'Wrong sign', 'Missing parameters'] as $candidate) {
