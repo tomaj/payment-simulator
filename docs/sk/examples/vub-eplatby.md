@@ -6,7 +6,7 @@ description: omnipay-vub proti simulátoru payment-simulator - odoslanie formul�
 # VÚB e-platby
 
 VÚB e-platby je jediná simulovaná brána, ktorá prijíma formulár odoslaný metódou POST. Príklad používa
-[omnipay-vub](https://github.com/tomaj/omnipay-vub) v testovacom režime.
+[omnipay-vub](https://tomaj.github.io/omnipay-vub/sk/) v testovacom režime.
 
 Zdrojový kód: [`examples/vub-eplatby/run.php`](https://github.com/tomaj/payment-simulator/blob/master/examples/vub-eplatby/run.php) ·
 spustíte ho príkazom `examples/ci/example.sh vub-eplatby`.

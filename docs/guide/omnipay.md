@@ -13,8 +13,8 @@ The simulator was built for the `tomaj/omnipay-*` gateways. In test mode they se
 | [omnipay-tatra](https://tomaj.github.io/omnipay-tatra/) | `TatraPay` | HMAC, AES or DES | `/payment/tatrapay-hmac`, `-aes256`, `-des` |
 | | `CardPay` | HMAC, AES or DES | `/payment/cardpay-hmac`, `-aes256`, `-des`; `authorize()`: `/payment/cardpay-authorize-hmac`; `cancelAuthorize()`: `/payment/cardpay-cancel-purchase` |
 | | `ComfortPay` | HMAC or AES | `/payment/comfortpay-hmac`, `-aes256`; the SOAP web service is answered by the library itself in test mode |
-| [omnipay-vub](https://github.com/tomaj/omnipay-vub) | `Eplatby` | e-platby | `/payment/eplatby-hmac` (form POST) |
-| [omnipay-slsp](https://github.com/tomaj/omnipay-slsp) | `SporoPay` | SporoPay | `/payment/sporopay-des` |
+| [omnipay-vub](https://tomaj.github.io/omnipay-vub/) | `Eplatby` | e-platby | `/payment/eplatby-hmac` (form POST) |
+| [omnipay-slsp](https://tomaj.github.io/omnipay-slsp/) | `SporoPay` | SporoPay | `/payment/sporopay-des` |
 
 ## Configure the gateway
 
