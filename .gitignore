@@ -3,3 +3,8 @@
 /.phpunit.cache/
 .idea/
 docker-compose.override.yml
+/examples/*/vendor/
+/examples/*/composer.lock
+docs/node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/

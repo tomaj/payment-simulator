@@ -1,0 +1,10 @@
+{
+    "name": "tomaj/payment-simulator-example-cardpay-direct-api",
+    "description": "payment-simulator example: cardpay-direct-api, plain PHP without dependencies",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.4",
+        "ext-openssl": "*"
+    }
+}

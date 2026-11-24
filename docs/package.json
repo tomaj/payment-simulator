@@ -1,0 +1,27 @@
+{
+  "name": "payment-simulator-docs",
+  "version": "1.0.0",
+  "description": "Documentation for tomaj/payment-simulator",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview",
+    "docs:links": "bash scripts/check-links.sh",
+    "images": "python3 scripts/illustrations.py && node scripts/og-image.mjs"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "linkinator": "8.1.0",
+    "puppeteer-core": "25.16.0",
+    "vitepress": "1.6.4"
+  },
+  "overrides": {
+    "vite": "^6.4.3",
+    "glob": "^14.0.6",
+    "minimatch": "^11.0.9"
+  }
+}

@@ -26,7 +26,7 @@
 	"support": {
 		"issues": "https://github.com/tomaj/payment-simulator/issues",
 		"source": "https://github.com/tomaj/payment-simulator",
-		"docs": "https://github.com/tomaj/payment-simulator#readme",
+		"docs": "https://tomaj.github.io/payment-simulator/",
 		"security": "https://github.com/tomaj/payment-simulator/security/policy"
 	},
 	"require": {

@@ -1,0 +1,4 @@
+GET /payment/sporopay-des -> Sign OK
+  ok       paid
+  fail     not paid
+  timeout  not paid

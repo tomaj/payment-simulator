@@ -1,0 +1,10 @@
+{
+    "name": "tomaj/payment-simulator-example-plain-php",
+    "description": "payment-simulator example: plain-php, plain PHP without dependencies",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.4",
+        "ext-openssl": "*"
+    }
+}

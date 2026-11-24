@@ -1,0 +1,4 @@
+CPA (capture): res OK, body signature valid
+SPA (release): res OK, body signature valid
+CB (refund): res OK, body signature valid
+wrong request signature: res FAIL, errorCode 10, Authorization header: none

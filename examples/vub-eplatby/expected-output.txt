@@ -1,0 +1,4 @@
+POST /payment/eplatby-hmac -> Sign OK
+  ok       paid
+  fail     not paid
+  timeout  not paid

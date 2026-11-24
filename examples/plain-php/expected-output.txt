@@ -1,0 +1,6 @@
+signed request: HTTP 200, Sign OK
+  ok       RES=OK   signature valid
+  fail     RES=FAIL signature valid
+  timeout  RES=TOUT signature valid
+wrong signature: HTTP 200, Wrong sign, links back: none
+missing AMT and TIMESTAMP: HTTP 400, Missing parameters: AMT, TIMESTAMP

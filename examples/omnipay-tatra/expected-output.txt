@@ -1,0 +1,16 @@
+TatraPay: /payment/tatrapay-hmac -> Sign OK
+  ok       successful
+  fail     not successful
+  timeout  pending
+CardPay: /payment/cardpay-hmac -> Sign OK
+  ok       successful
+  fail     not successful
+  timeout  not successful
+ComfortPay: /payment/comfortpay-hmac -> Sign OK
+  ok       successful
+  fail     not successful
+  timeout  not successful
+CardPay authorize: /payment/cardpay-authorize-hmac -> Sign OK
+  ok       successful
+  fail     not successful
+  timeout  not successful
