@@ -24,6 +24,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Fixed
 
+- CardPay Direct API: the 3-D Secure form posts to the port of the request too (it dropped `:8080` from `http://127.0.0.1:8080`) ([#30](https://github.com/tomaj/payment-simulator/issues/30)).
 - Specific symbol (`SS`) ([#26](https://github.com/tomaj/payment-simulator/issues/26)):
   - TatraPay (AES, DES, HMAC) reads the optional `SS` and signs `MID AMT CURR VS SS CS RURL` (HMAC: `… REM TIMESTAMP`), the order `tomaj/omnipay-tatra` has used against Tatra banka in production (the TatraPay specification is not public); the HMAC return URL is signed over `AMT CURR VS SS CS RES TID TIMESTAMP` and carries `SS`. A request with `SS` showed "Wrong sign" before.
   - VÚB ePlatby signs `MID AMT VS SS CS RURL` (SS between VS and CS, the order VÚB confirmed, see tomaj/omnipay-vub#2; it was `… CS SS …`) and the return URL over `VS SS RES`, with `SS` in the return URL.

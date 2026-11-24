@@ -23,8 +23,9 @@ abstract class AppTestCase extends TestCase
      * @param array<mixed> $query
      * @param array<mixed> $post
      * @param array<string, string> $headers
+     * @param string $host scheme, host and port the request is sent to
      */
-    protected function request(string $method, string $path, array $query = [], array $post = [], array $headers = [], ?string $body = null): HttpResult
+    protected function request(string $method, string $path, array $query = [], array $post = [], array $headers = [], ?string $body = null, string $host = self::HOST): HttpResult
     {
         $configurator = new Configurator();
         $configurator->setDebugMode(false);
@@ -32,7 +33,7 @@ abstract class AppTestCase extends TestCase
         $configurator->addConfig(__DIR__ . '/config.neon');
         $container = $configurator->createContainer();
 
-        $url = new UrlScript(self::HOST . $path . ($query !== [] ? '?' . http_build_query($query) : ''), '/');
+        $url = new UrlScript($host . $path . ($query !== [] ? '?' . http_build_query($query) : ''), '/');
         $httpRequest = new Request($url, $post, [], [], $headers, $method, '127.0.0.1', null, $body === null ? null : static fn(): string => $body);
         $container->removeService('http.request');
         $container->addService('http.request', $httpRequest);
