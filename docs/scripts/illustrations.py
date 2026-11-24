@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Writes the logo, favicon, hero illustration, diagram and social card SVGs into docs/public.
 
+The hero and the diagram are written in English and in Slovak (`-sk` files, used by the pages under docs/sk/).
+
 Each drawing exists once, with colour tokens; the light and dark files only swap the palette. Run it after a change,
 then `node scripts/og-image.mjs` for the PNG icons and og.png (or `npm run images` for both).
 
@@ -60,7 +62,7 @@ def check(x: float, y: float, color: str, width: float = 2.5) -> str:
     return f'<path d="M{x} {y}l4 4 8-9" fill="none" stroke="{color}" stroke-width="{width}" stroke-linecap="round" stroke-linejoin="round"/>'
 
 
-def hero_body(c: dict[str, str]) -> str:
+def hero_body(c: dict[str, str], t: dict[str, str]) -> str:
     """The simulator's payment page between a signed request coming in and three signed answers going back."""
     chips = ""
     for i, (label, color) in enumerate(zip(["TatraPay", "CardPay", "e-platby", "SporoPay"], [BANKS[0], BANKS[0], BANKS[1], BANKS[2]])):
@@ -98,7 +100,7 @@ def hero_body(c: dict[str, str]) -> str:
   <path d="M246 336V378" fill="none" stroke="{c['arrow']}" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
   <path d="M404 336V378" fill="none" stroke="{c['arrow']}" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
   <text x="16" y="404" {MONO} font-size="11.5" fill="{c['ink']}">rurl?VS=2026001&amp;RES=OK|FAIL|TOUT&amp;…&amp;HMAC=…</text>
-  <text x="16" y="424" {FONT} font-size="11.5" fill="{c['muted']}">signed like the bank signs it, for your completePurchase()</text>
+  <text x="16" y="424" {FONT} font-size="11.5" fill="{c['muted']}">{t['signed']}</text>
 """
 
 
@@ -109,12 +111,12 @@ DEFS = """<defs>
   </defs>"""
 
 
-def hero(c: dict[str, str]) -> str:
+def hero(c: dict[str, str], t: dict[str, str]) -> str:
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 440" width="520" height="440" role="img" aria-labelledby="t d">
   <title id="t">payment-simulator</title>
-  <desc id="d">A signed request from the shop opens the simulator's payment page, which shows that the signature is correct and offers three signed answers back to the shop: a successful, a failed and a timed-out payment.</desc>
+  <desc id="d">{t['desc']}</desc>
   {DEFS.format(arrow=c['arrow'])}
-  {hero_body(c)}
+  {hero_body(c, t)}
 </svg>
 """
 
@@ -132,7 +134,7 @@ def og(c: dict[str, str]) -> str:
   <text x="80" y="476" {FONT} font-size="34" fill="{c['muted']}">without the bank and without money</text>
   <text x="80" y="566" {MONO} font-size="24" fill="{c['ink']}">TatraPay · CardPay · ComfortPay · e-platby · SporoPay</text>
   <g transform="translate(720 80) scale(0.9)">
-  {hero_body(c)}
+  {hero_body(c, HERO[""])}
   </g>
 </svg>
 """
@@ -172,20 +174,51 @@ def sequence(c: dict[str, str], title: str, desc: str, lanes: list[str], steps: 
     return "\n".join(out)
 
 
+# Labels per language. English files keep their names; Slovak files get a -sk suffix
+# (illustrations/hero-sk-light.svg, diagrams/flow-sk-dark.svg) and are used by the pages under docs/sk/.
+# The simulator's own UI labels (Sign OK, continue ok …) stay in English in both, as the app shows them.
+HERO = {
+    "": {
+        "desc": "A signed request from the shop opens the simulator's payment page, which shows that the signature is correct and offers three signed answers back to the shop: a successful, a failed and a timed-out payment.",
+        "signed": "signed like the bank signs it, for your completePurchase()",
+    },
+    "-sk": {
+        "desc": "Podpísaná požiadavka z e-shopu otvorí platobnú stránku simulátora, ktorá ukáže, že podpis je správny, a ponúkne tri podpísané odpovede späť do e-shopu: úspešnú, neúspešnú a časovo vypršanú platbu.",
+        "signed": "podpísané tak, ako podpisuje banka, pre váš completePurchase()",
+    },
+}
+
 DIAGRAMS = {
-    "flow": (
-        "A payment through payment-simulator",
-        "The shop redirects the customer to the simulator with a signed request; the simulator recomputes the signature with its test key and shows Sign OK, Wrong sign or Missing parameters; with a correct signature the customer picks a successful, failed or timed-out payment and is sent back to the shop's return URL with a result signed like the bank signs it, which the shop verifies.",
-        ["Customer's browser", "Your shop (test mode)", "payment-simulator"],
-        [
-            (1, 0, "302 / POST form", "signed with the test key"),
-            (0, 2, "GET /payment/…", "MID AMT CURR VS RURL … HMAC"),
-            (2, None, "recompute the signature", "Sign OK · Wrong sign · Missing parameters"),
-            (2, 0, "continue ok | fail | timeout", "the customer picks the bank's answer"),
-            (0, 1, "GET rurl?VS=…&amp;RES=…", "signed like the bank signs it"),
-            (1, None, "completePurchase()", "verify, then mark the order"),
-        ],
-    ),
+    "": {
+        "flow": (
+            "A payment through payment-simulator",
+            "The shop redirects the customer to the simulator with a signed request; the simulator recomputes the signature with its test key and shows Sign OK, Wrong sign or Missing parameters; with a correct signature the customer picks a successful, failed or timed-out payment and is sent back to the shop's return URL with a result signed like the bank signs it, which the shop verifies.",
+            ["Customer's browser", "Your shop (test mode)", "payment-simulator"],
+            [
+                (1, 0, "302 / POST form", "signed with the test key"),
+                (0, 2, "GET /payment/…", "MID AMT CURR VS RURL … HMAC"),
+                (2, None, "recompute the signature", "Sign OK · Wrong sign · Missing parameters"),
+                (2, 0, "continue ok | fail | timeout", "the customer picks the bank's answer"),
+                (0, 1, "GET rurl?VS=…&amp;RES=…", "signed like the bank signs it"),
+                (1, None, "completePurchase()", "verify, then mark the order"),
+            ],
+        ),
+    },
+    "-sk": {
+        "flow": (
+            "Platba cez payment-simulator",
+            "E-shop presmeruje zákazníka na simulátor s podpísanou požiadavkou; simulátor prepočíta podpis testovacím kľúčom a zobrazí Sign OK, Wrong sign alebo Missing parameters; pri správnom podpise zákazník zvolí úspešnú, neúspešnú alebo časovo vypršanú platbu a vráti sa na návratovú URL e-shopu s výsledkom podpísaným tak, ako ho podpisuje banka, ktorý e-shop overí.",
+            ["Prehliadač zákazníka", "Váš e-shop (test. režim)", "payment-simulator"],
+            [
+                (1, 0, "302 / POST formulár", "podpísané testovacím kľúčom"),
+                (0, 2, "GET /payment/…", "MID AMT CURR VS RURL … HMAC"),
+                (2, None, "prepočíta podpis", "Sign OK · Wrong sign · Missing parameters"),
+                (2, 0, "continue ok | fail | timeout", "zákazník zvolí odpoveď banky"),
+                (0, 1, "GET rurl?VS=…&amp;RES=…", "podpísané tak, ako podpisuje banka"),
+                (1, None, "completePurchase()", "overiť, potom označiť objednávku"),
+            ],
+        ),
+    },
 }
 
 
@@ -199,12 +232,14 @@ def main() -> None:
     write(PUBLIC / "logo.svg", logo(LIGHT))
     write(PUBLIC / "logo-dark.svg", logo(DARK))
     write(PUBLIC / "favicon.svg", logo(LIGHT))
-    write(PUBLIC / "illustrations" / "hero-light.svg", hero(LIGHT))
-    write(PUBLIC / "illustrations" / "hero-dark.svg", hero(DARK))
+    for suffix, strings in HERO.items():
+        write(PUBLIC / "illustrations" / f"hero{suffix}-light.svg", hero(LIGHT, strings))
+        write(PUBLIC / "illustrations" / f"hero{suffix}-dark.svg", hero(DARK, strings))
     write(PUBLIC / "og.svg", og(LIGHT))
-    for name, (title, desc, lanes, steps) in DIAGRAMS.items():
-        write(PUBLIC / "diagrams" / f"{name}-light.svg", sequence(LIGHT, title, desc, lanes, steps))
-        write(PUBLIC / "diagrams" / f"{name}-dark.svg", sequence(DARK, title, desc, lanes, steps))
+    for suffix, diagrams in DIAGRAMS.items():
+        for name, (title, desc, lanes, steps) in diagrams.items():
+            write(PUBLIC / "diagrams" / f"{name}{suffix}-light.svg", sequence(LIGHT, title, desc, lanes, steps))
+            write(PUBLIC / "diagrams" / f"{name}{suffix}-dark.svg", sequence(DARK, title, desc, lanes, steps))
 
 
 if __name__ == "__main__":

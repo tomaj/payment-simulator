@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 440" width="520" height="440" role="img" aria-labelledby="t d">
+  <title id="t">payment-simulator</title>
+  <desc id="d">Podpísaná požiadavka z e-shopu otvorí platobnú stránku simulátora, ktorá ukáže, že podpis je správny, a ponúkne tri podpísané odpovede späť do e-shopu: úspešnú, neúspešnú a časovo vypršanú platbu.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#0e7490"/>
+    </marker>
+  </defs>
+  
+  <!-- the signed request -->
+  <text x="16" y="34" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#0f172a">GET /payment/tatrapay-hmac</text>
+  <text x="16" y="52" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#475569">?MID=9999&amp;AMT=24.90&amp;VS=2026001…&amp;HMAC=d594…</text>
+  <rect x="120" y="70" width="70" height="22" rx="11" fill="#f1f5f9" stroke="#cbd5e1"/><circle cx="132" cy="81" r="4.5" fill="#ffd200"/><text x="141" y="85.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="#475569">TatraPay</text><rect x="196" y="70" width="70" height="22" rx="11" fill="#f1f5f9" stroke="#cbd5e1"/><circle cx="208" cy="81" r="4.5" fill="#ffd200"/><text x="217" y="85.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="#475569">CardPay</text><rect x="272" y="70" width="70" height="22" rx="11" fill="#f1f5f9" stroke="#cbd5e1"/><circle cx="284" cy="81" r="4.5" fill="#0062ae"/><text x="293" y="85.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="#475569">e-platby</text><rect x="348" y="70" width="70" height="22" rx="11" fill="#f1f5f9" stroke="#cbd5e1"/><circle cx="360" cy="81" r="4.5" fill="#e30613"/><text x="369" y="85.5" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="#475569">SporoPay</text>
+  <path d="M60 60V128" fill="none" stroke="#0e7490" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+
+  <!-- the simulator page -->
+  <rect x="16" y="136" width="488" height="214" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <path d="M16 150a14 14 0 0 1 14-14h460a14 14 0 0 1 14 14v12H16z" fill="#f1f5f9"/>
+  <circle cx="34" cy="150" r="4" fill="#cbd5e1"/><circle cx="48" cy="150" r="4" fill="#cbd5e1"/><circle cx="62" cy="150" r="4" fill="#cbd5e1"/>
+  <text x="80" y="154" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#475569">127.0.0.1:8080/payment/tatrapay-hmac</text>
+  <text x="36" y="194" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="17" font-weight="700" fill="#0f172a">TatraPay simulator (HMAC version)</text>
+  <text x="36" y="220" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#475569">Input Sign:    d594feb52753b799…</text>
+  <text x="36" y="238" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#475569">Computed Sign: d594feb52753b799…</text>
+  <rect x="36" y="252" width="104" height="28" rx="14" fill="#ecfdf3" stroke="#15803d"/>
+  <path d="M48 266l4 4 8-9" fill="none" stroke="#15803d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="68" y="271" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#15803d">Sign OK</text>
+  <rect x="36" y="296" width="132" height="36" rx="8" fill="#0891b2"/>
+  <text x="102" y="319" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">continue ok</text>
+  <rect x="180" y="296" width="132" height="36" rx="8" fill="#fef2f2" stroke="#b91c1c"/>
+  <text x="246" y="319" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#b91c1c" text-anchor="middle">continue fail</text>
+  <rect x="324" y="296" width="160" height="36" rx="8" fill="#fffbeb" stroke="#b45309"/>
+  <text x="404" y="319" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#b45309" text-anchor="middle">continue timeout</text>
+
+  <!-- the signed answers -->
+  <path d="M102 336V378" fill="none" stroke="#0e7490" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+  <path d="M246 336V378" fill="none" stroke="#0e7490" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+  <path d="M404 336V378" fill="none" stroke="#0e7490" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+  <text x="16" y="404" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#0f172a">rurl?VS=2026001&amp;RES=OK|FAIL|TOUT&amp;…&amp;HMAC=…</text>
+  <text x="16" y="424" font-family="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11.5" fill="#475569">podpísané tak, ako podpisuje banka, pre váš completePurchase()</text>
+
+</svg>

@@ -1,7 +1,9 @@
 import { defineConfig } from 'vitepress'
+import { nav, navSk, sidebar, sidebarSk } from '../site-nav'
 import { seoHead, siteUrl } from './seo'
 
 const description = 'Simulator of Slovak bank online payment gateways (TatraPay, CardPay, ComfortPay, CardPay Direct API, VÚB e-platby, SLSP SporoPay) for testing shop integrations without the bank and without money.'
+const descriptionSk = 'Simulátor platobných brán slovenských bánk (TatraPay, CardPay, ComfortPay, CardPay Direct API, VÚB e-platby, SLSP SporoPay) na testovanie integrácie e-shopu bez banky a bez peňazí.'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -26,7 +28,57 @@ export default defineConfig({
   },
 
   transformHead({ pageData, siteConfig }) {
-    return seoHead(pageData, siteConfig.srcDir, description)
+    return seoHead(pageData, siteConfig.srcDir, pageData.relativePath.startsWith('sk/') ? descriptionSk : description)
+  },
+
+  // English is the default locale at the site root; Slovak mirrors every page under /sk/.
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en-US',
+      description,
+    },
+    sk: {
+      label: 'Slovenčina',
+      lang: 'sk-SK',
+      link: '/sk/',
+      title: 'payment-simulator',
+      description: descriptionSk,
+      themeConfig: {
+        nav: navSk,
+        sidebar: sidebarSk,
+        outline: { level: [2, 3], label: 'Na tejto stránke' },
+        docFooter: {
+          prev: 'Predchádzajúca stránka',
+          next: 'Nasledujúca stránka',
+        },
+        editLink: {
+          pattern: 'https://github.com/tomaj/payment-simulator/edit/master/docs/:path',
+          text: 'Upraviť túto stránku na GitHube',
+        },
+        lastUpdated: {
+          text: 'Naposledy upravené',
+        },
+        darkModeSwitchLabel: 'Vzhľad',
+        lightModeSwitchTitle: 'Prepnúť na svetlý režim',
+        darkModeSwitchTitle: 'Prepnúť na tmavý režim',
+        sidebarMenuLabel: 'Ponuka',
+        returnToTopLabel: 'Späť na začiatok',
+        langMenuLabel: 'Zmeniť jazyk',
+        skipToContentLabel: 'Preskočiť na obsah',
+        footer: {
+          message: 'Vydané pod <a href="https://github.com/tomaj/payment-simulator/blob/master/LICENSE.md">licenciou MIT</a>. Projekt nie je prepojený so žiadnou bankou; simulované stránky len napodobňujú protokoly bánk.',
+          copyright: 'Copyright © 2016-2026 Tomas Majer',
+        },
+        notFound: {
+          code: '404',
+          title: 'STRÁNKA SA NENAŠLA',
+          quote: 'Táto stránka neexistuje alebo sa presunula. Skúste vyhľadávanie alebo začnite od úvodu.',
+          linkLabel: 'prejsť na úvod',
+          linkText: 'Späť na úvod',
+        },
+      },
+    },
   },
 
   // The examples are included from the repository root (<<< @/../examples/...).
@@ -37,61 +89,8 @@ export default defineConfig({
   themeConfig: {
     logo: { light: '/logo.svg', dark: '/logo-dark.svg', alt: 'payment-simulator' },
 
-    nav: [
-      { text: 'Guide', link: '/guide/getting-started', activeMatch: '/guide/' },
-      { text: 'Banks', link: '/banks/', activeMatch: '/banks/' },
-      { text: 'Examples', link: '/examples/', activeMatch: '/examples/' },
-      { text: 'Endpoints', link: '/reference/endpoints' },
-      { text: 'Live instance', link: 'https://platby.tomaj.sk/' },
-    ],
-
-    sidebar: [
-      {
-        text: 'Introduction',
-        items: [
-          { text: 'Getting started', link: '/guide/getting-started' },
-          { text: 'How it works', link: '/guide/how-it-works' },
-          { text: 'Running it', link: '/guide/running' },
-          { text: 'Configuration and test keys', link: '/guide/configuration' },
-          { text: 'Using it with Omnipay', link: '/guide/omnipay' },
-          { text: 'Troubleshooting', link: '/guide/troubleshooting' },
-        ],
-      },
-      {
-        text: 'Banks',
-        items: [
-          { text: 'Overview', link: '/banks/' },
-          { text: 'Tatra banka: TatraPay', link: '/banks/tatrapay' },
-          { text: 'Tatra banka: CardPay', link: '/banks/cardpay' },
-          { text: 'Tatra banka: ComfortPay', link: '/banks/comfortpay' },
-          { text: 'CardPay Direct API', link: '/banks/cardpay-direct-api' },
-          { text: 'VÚB e-platby', link: '/banks/vub-eplatby' },
-          { text: 'SLSP SporoPay', link: '/banks/slsp-sporopay' },
-        ],
-      },
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Overview', link: '/examples/' },
-          { text: 'omnipay-tatra', link: '/examples/omnipay-tatra' },
-          { text: 'Plain PHP client', link: '/examples/plain-php' },
-          { text: 'VÚB e-platby', link: '/examples/vub-eplatby' },
-          { text: 'SLSP SporoPay', link: '/examples/slsp-sporopay' },
-          { text: 'CardPay Direct API', link: '/examples/cardpay-direct-api' },
-          { text: 'CardPay capture and refund', link: '/examples/cardpay-capture' },
-        ],
-      },
-      {
-        text: 'Reference',
-        items: [
-          { text: 'Endpoints', link: '/reference/endpoints' },
-          { text: 'FAQ', link: '/faq' },
-          { text: 'Security', link: '/security' },
-          { text: 'Changelog', link: '/changelog' },
-          { text: 'Contributing', link: '/contributing' },
-        ],
-      },
-    ],
+    nav,
+    sidebar,
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/tomaj/payment-simulator' },
@@ -112,6 +111,33 @@ export default defineConfig({
 
     search: {
       provider: 'local',
+      options: {
+        locales: {
+          sk: {
+            translations: {
+              button: {
+                buttonText: 'Hľadať',
+                buttonAriaLabel: 'Hľadať',
+              },
+              modal: {
+                displayDetails: 'Zobraziť podrobný zoznam',
+                resetButtonTitle: 'Vymazať hľadanie',
+                backButtonTitle: 'Zavrieť hľadanie',
+                noResultsText: 'Žiadne výsledky pre',
+                footer: {
+                  selectText: 'vybrať',
+                  selectKeyAriaLabel: 'enter',
+                  navigateText: 'prejsť',
+                  navigateUpKeyAriaLabel: 'šípka hore',
+                  navigateDownKeyAriaLabel: 'šípka dole',
+                  closeText: 'zavrieť',
+                  closeKeyAriaLabel: 'escape',
+                },
+              },
+            },
+          },
+        },
+      },
     },
 
     footer: {
