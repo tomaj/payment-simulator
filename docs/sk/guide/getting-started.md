@@ -58,7 +58,7 @@ Celý skript a jeho výstup nájdete v [príklade v čistom PHP](/sk/examples/pl
 
 ## S bránou Omnipay {#with-an-omnipay-gateway}
 
-Brány [omnipay-tatra](https://tomaj.github.io/omnipay-tatra/), [omnipay-vub](https://github.com/tomaj/omnipay-vub) a
+Brány [omnipay-tatra](https://tomaj.github.io/omnipay-tatra/sk/), [omnipay-vub](https://github.com/tomaj/omnipay-vub) a
 [omnipay-slsp](https://github.com/tomaj/omnipay-slsp) v testovacom režime posielajú platby na simulátor;
 nastavte `testHost` na vašu inštanciu:
 

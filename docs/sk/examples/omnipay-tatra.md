@@ -5,7 +5,7 @@ description: omnipay-tatra v testovacom režime proti simulátoru payment-simula
 
 # omnipay-tatra
 
-[omnipay-tatra](https://tomaj.github.io/omnipay-tatra/) je klient, pre ktorý vznikli endpointy Tatra banky.
+[omnipay-tatra](https://tomaj.github.io/omnipay-tatra/sk/) je klient, pre ktorý vznikli endpointy Tatra banky.
 Príklad spustí proti simulátoru šesť tokov a každý dokončí všetkými tromi odpoveďami, medzi nimi aj TatraPay so
 špecifickým symbolom (`ss`) pri HMAC a AES kľúči.
 
