@@ -33,7 +33,7 @@
 		"php": "^8.4",
 		"ext-openssl": "*",
 		"latte/latte": "^3.0",
-		"moneyphp/money": "^3.3.3",
+		"moneyphp/money": "^4.9.0",
 		"nette/application": "^3.2",
 		"nette/bootstrap": "^3.2",
 		"nette/di": "^3.2",
