@@ -5,7 +5,7 @@ ENV BUILD_DEPS libxml2-dev
 ENV RUN_DEPS git wget vim curl less gnupg unzip pv
 
 RUN apt-get update && apt-get install -y ${BUILD_DEPS} ${RUN_DEPS} --no-install-recommends \
-    && docker-php-ext-install soap
+    && docker-php-ext-install soap bcmath
 
 # OpenSSL legacy provider (single DES for the TatraPay / CardPay DES simulators)
 
