@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Functional;
 
 use App\Presenters\PaymentPresenter;
+use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\GatewayInterface;
 use Omnipay\Common\Message\RedirectResponseInterface;
 use Omnipay\Common\Message\RequestInterface;
@@ -13,8 +14,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * The simulator accepts the requests built by the tomaj/omnipay-* gateways in test mode (omnipay-tatra master, the
- * released omnipay-vub and omnipay-slsp), and the libraries accept the simulator's signed return URLs.
+ * The simulator accepts the requests built by the tomaj/omnipay-* gateways in test mode (the master branches of
+ * omnipay-tatra 5, omnipay-vub 4 and omnipay-slsp 4), and the libraries accept the simulator's signed return URLs.
+ * completePurchase() gets the order's VS, SS and amount, so the libraries check that the return belongs to it.
  *
  * DES needs the OpenSSL legacy provider (OPENSSL_CONF=docker/php/openssl-legacy.cnf, as in CI); without it the DES
  * cases are skipped.
@@ -22,6 +24,14 @@ use Symfony\Component\HttpFoundation\Request;
 final class OmnipayLibrariesTest extends AppTestCase
 {
     private const string RURL = 'https://shop.example/return';
+
+    private const array EPLATBY = ['mid' => '9999', 'sharedSecret' => PaymentPresenter::EPLATBY_KEY, 'testHost' => self::HOST, 'testMode' => true];
+
+    private const array EPLATBY_PAYMENT = ['amount' => '10.50', 'vs' => '1234567890', 'ss' => '77', 'cs' => '0308', 'rurl' => self::RURL];
+
+    private const array SPOROPAY = ['sharedSecret' => PaymentPresenter::SPOROPAY_KEY, 'testHost' => self::HOST, 'testMode' => true];
+
+    private const array SPOROPAY_PAYMENT = ['accountNumberPrefix' => '000000', 'accountNumber' => '0013662162', 'amount' => '10.50', 'vs' => '1234567890', 'ss' => '77', 'rurl' => self::RURL, 'param' => 'abc=1'];
 
     /**
      * @return iterable<string, array{string, array<string, mixed>, string, array<string, mixed>, string}>
@@ -47,8 +57,11 @@ final class OmnipayLibrariesTest extends AppTestCase
         yield 'ComfortPay HMAC' => ['ComfortPay', $tatra, 'purchase', $payment + $card + ['rem' => 'a@b.sk'], 'completePurchase'];
         yield 'ComfortPay AES' => ['ComfortPay', $aes, 'purchase', $payment + $card + ['cs' => '0308'], 'completePurchase'];
         yield 'CardPay authorize with card registration' => ['CardPay', $tatra, 'authorize', $payment + ['ipc' => '1.2.3.4', 'name' => 'Jan', 'tpay' => 'Y', 'tdsEmail' => 'a@b.sk'], 'completeAuthorize'];
-        yield 'VUB ePlatby' => ['Eplatby', ['mid' => '9999', 'sharedSecret' => PaymentPresenter::EPLATBY_KEY, 'testHost' => self::HOST, 'testMode' => true], 'purchase', ['amount' => '10.50', 'vs' => '1234567890', 'cs' => '0308', 'rurl' => self::RURL], 'completePurchase'];
-        yield 'SporoPay' => ['SporoPay', ['sharedSecret' => PaymentPresenter::SPOROPAY_KEY, 'testHost' => self::HOST, 'testMode' => true], 'purchase', ['accountNumberPrefix' => '000000', 'accountNumber' => '0013662162', 'amount' => '10.50', 'vs' => '1234567890', 'ss' => '77', 'rurl' => self::RURL, 'param' => 'abc=1'], 'completePurchase'];
+        yield 'VUB ePlatby' => ['Eplatby', self::EPLATBY, 'purchase', ['amount' => '10.50', 'vs' => '1234567', 'rurl' => self::RURL], 'completePurchase'];
+        // omnipay-vub 4 signs SS in VÚB's order (MID AMT VS SS CS RURL, return VS SS RES) and requires a 10-digit VS with SS or CS
+        yield 'VUB ePlatby with CS' => ['Eplatby', self::EPLATBY, 'purchase', ['amount' => '10.50', 'vs' => '0001234567', 'cs' => '0308', 'rurl' => self::RURL], 'completePurchase'];
+        yield 'VUB ePlatby with SS' => ['Eplatby', self::EPLATBY, 'purchase', self::EPLATBY_PAYMENT, 'completePurchase'];
+        yield 'SporoPay' => ['SporoPay', self::SPOROPAY, 'purchase', self::SPOROPAY_PAYMENT, 'completePurchase'];
     }
 
     /**
@@ -76,19 +89,73 @@ final class OmnipayLibrariesTest extends AppTestCase
             self::assertNotNull($url);
             self::assertStringStartsWith(self::RURL . '?', $url);
 
-            // omnipay-tatra reads the customer's request given to the gateway, omnipay-vub and omnipay-slsp read $_GET
-            $back = Omnipay::create($name, null, Request::create($url));
-            $back->initialize($config);
-            $previous = $_GET;
-            parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
-            $_GET = $query;
-            try {
-                $result = $this->operation($back, $completeOperation, $parameters)->send();
-            } finally {
-                $_GET = $previous;
-            }
+            // the gateways read the return from the request they are given, not from $_GET
+            $result = $this->operation($this->returnGateway($name, $config, $url), $completeOperation, $parameters)->send();
             self::assertSame($successful, $result->isSuccessful(), $link);
         }
+    }
+
+    /**
+     * A genuine, correctly signed return of one order must not complete another order, and a tampered return must
+     * fail the signature check.
+     *
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: array<string, mixed>, 3: array<string, mixed>, 4: array<string, string>, 5: string, 6?: string}>
+     */
+    public static function rejectedReturns(): iterable
+    {
+        $eplatby = ['Eplatby', self::EPLATBY, self::EPLATBY_PAYMENT];
+        $sporoPay = ['SporoPay', self::SPOROPAY, self::SPOROPAY_PAYMENT];
+
+        yield 'VUB ePlatby: another order' => [...$eplatby, ['vs' => '1234567891'], [], 'Variable symbol mismatch'];
+        yield 'VUB ePlatby: another specific symbol' => [...$eplatby, ['ss' => '78'], [], 'Specific symbol mismatch'];
+        yield 'VUB ePlatby: order without a specific symbol' => [...$eplatby, ['ss' => null], [], 'Specific symbol mismatch'];
+        // VÚB signs VS + SS without a separator: digits moved from SS to VS keep the signed string
+        yield 'VUB ePlatby: digits moved between VS and SS' => [...$eplatby, ['vs' => '12345678907', 'ss' => '7'], ['VS' => '12345678907', 'SS' => '7'], 'The vs parameter must be exactly 10 digits when ss is set'];
+        yield 'VUB ePlatby: tampered result' => [...$eplatby, [], ['RES' => 'OK'], 'incorect signature', 'continue fail'];
+        yield 'SporoPay: another amount' => [...$sporoPay, ['amount' => '1.00'], [], 'Amount mismatch'];
+        yield 'SporoPay: tampered amount' => [...$sporoPay, ['amount' => '1.00'], ['suma' => '1.00'], 'incorect signature'];
+        yield 'SporoPay: another order' => [...$sporoPay, ['vs' => '1234567891'], [], 'Variable symbol mismatch'];
+        yield 'SporoPay: another specific symbol' => [...$sporoPay, ['ss' => '78'], [], 'Specific symbol mismatch'];
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     * @param array<string, mixed> $payment the order paid at the simulator
+     * @param array<string, mixed> $order the order completePurchase() is called for (overrides $payment)
+     * @param array<string, string> $tamper query parameters changed in the simulator's signed return URL
+     */
+    #[DataProvider('rejectedReturns')]
+    public function testReturnIsRejected(string $name, array $config, array $payment, array $order, array $tamper, string $message, string $link = 'continue ok'): void
+    {
+        $gateway = Omnipay::create($name);
+        $gateway->initialize($config);
+        $response = $gateway->purchase($payment)->send();
+        self::assertInstanceOf(RedirectResponseInterface::class, $response);
+        $page = $this->open($response);
+        self::assertStringContainsString('Sign OK', $page->body, $page->body);
+
+        $url = $page->link($link);
+        self::assertNotNull($url);
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+        $url = self::RURL . '?' . http_build_query(array_replace($query, $tamper));
+
+        try {
+            $this->operation($this->returnGateway($name, $config, $url), 'completePurchase', array_replace($payment, $order))->send();
+            self::fail('The return was accepted');
+        } catch (InvalidRequestException $e) {
+            self::assertSame($message, $e->getMessage());
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     */
+    private function returnGateway(string $name, array $config, string $url): GatewayInterface
+    {
+        $gateway = Omnipay::create($name, null, Request::create($url));
+        $gateway->initialize($config);
+
+        return $gateway;
     }
 
     /**

@@ -43,5 +43,6 @@ je pri nich jednoducho neúspešná platba.
 - `isSuccessful()` a `isPending()` zodpovedajú výsledku.
 
 Vlastná PHPUnit sada simulátora (`tests/Functional/OmnipayLibrariesTest.php`) robí to isté priamo v procese
-s omnipay-tatra (HMAC, AES a DES kľúče, so špecifickým symbolom aj bez neho) a s vydanými verziami omnipay-vub
-a omnipay-slsp.
+s omnipay-tatra (HMAC, AES a DES kľúče, so špecifickým symbolom aj bez neho) a s omnipay-vub 4 a omnipay-slsp 4
+(vetva `master`, kým nie sú vydané), vrátane návratov inej objednávky alebo so zmenenou sumou, ktoré knižnice
+musia odmietnuť.

@@ -43,5 +43,6 @@ successful.
 - `isSuccessful()` and `isPending()` match the result.
 
 The simulator's own PHPUnit suite (`tests/Functional/OmnipayLibrariesTest.php`) does the same in-process with
-omnipay-tatra (HMAC, AES and DES keys, with and without a specific symbol) and the released omnipay-vub and
-omnipay-slsp.
+omnipay-tatra (HMAC, AES and DES keys, with and without a specific symbol) and omnipay-vub 4 and omnipay-slsp 4
+(`master` until they are tagged), including returns of another order or with a tampered amount that the libraries
+must reject.
