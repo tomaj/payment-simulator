@@ -57,8 +57,9 @@ final class OmnipayLibrariesTest extends AppTestCase
         yield 'ComfortPay HMAC' => ['ComfortPay', $tatra, 'purchase', $payment + $card + ['rem' => 'a@b.sk'], 'completePurchase'];
         yield 'ComfortPay AES' => ['ComfortPay', $aes, 'purchase', $payment + $card + ['cs' => '0308'], 'completePurchase'];
         yield 'CardPay authorize with card registration' => ['CardPay', $tatra, 'authorize', $payment + ['ipc' => '1.2.3.4', 'name' => 'Jan', 'tpay' => 'Y', 'tdsEmail' => 'a@b.sk'], 'completeAuthorize'];
-        yield 'VUB ePlatby' => ['Eplatby', self::EPLATBY, 'purchase', ['amount' => '10.50', 'vs' => '1234567', 'cs' => '0308', 'rurl' => self::RURL], 'completePurchase'];
-        // omnipay-vub 4 signs SS in VÚB's order (MID AMT VS SS CS RURL, return VS SS RES) and requires a 10-digit VS with SS
+        yield 'VUB ePlatby' => ['Eplatby', self::EPLATBY, 'purchase', ['amount' => '10.50', 'vs' => '1234567', 'rurl' => self::RURL], 'completePurchase'];
+        // omnipay-vub 4 signs SS in VÚB's order (MID AMT VS SS CS RURL, return VS SS RES) and requires a 10-digit VS with SS or CS
+        yield 'VUB ePlatby with CS' => ['Eplatby', self::EPLATBY, 'purchase', ['amount' => '10.50', 'vs' => '0001234567', 'cs' => '0308', 'rurl' => self::RURL], 'completePurchase'];
         yield 'VUB ePlatby with SS' => ['Eplatby', self::EPLATBY, 'purchase', self::EPLATBY_PAYMENT, 'completePurchase'];
         yield 'SporoPay' => ['SporoPay', self::SPOROPAY, 'purchase', self::SPOROPAY_PAYMENT, 'completePurchase'];
     }

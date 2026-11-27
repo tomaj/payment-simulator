@@ -18,7 +18,7 @@ $config = [
     'testMode' => true,
     'testHost' => simulatorUrl(),
 ];
-$order = ['amount' => '24.90', 'vs' => '2026001', 'cs' => '0308', 'rurl' => 'https://shop.example/payment/return'];
+$order = ['amount' => '24.90', 'vs' => '0002026001', 'cs' => '0308', 'rurl' => 'https://shop.example/payment/return'];
 
 $gateway = Omnipay::create('Eplatby');
 $gateway->initialize($config);

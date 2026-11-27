@@ -2520,12 +2520,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tomaj/omnipay-slsp.git",
-                "reference": "6f8717c41e0016971079c2dac80b3df5dd6ff331"
+                "reference": "d0f16452e2f1ae39e3aa46e103cd1b8266f38e9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tomaj/omnipay-slsp/zipball/6f8717c41e0016971079c2dac80b3df5dd6ff331",
-                "reference": "6f8717c41e0016971079c2dac80b3df5dd6ff331",
+                "url": "https://api.github.com/repos/tomaj/omnipay-slsp/zipball/d0f16452e2f1ae39e3aa46e103cd1b8266f38e9d",
+                "reference": "d0f16452e2f1ae39e3aa46e103cd1b8266f38e9d",
                 "shasum": ""
             },
             "require": {
@@ -2586,7 +2586,7 @@
                 "security": "https://github.com/tomaj/omnipay-slsp/security/policy",
                 "source": "https://github.com/tomaj/omnipay-slsp"
             },
-            "time": "2026-11-25T19:06:06+00:00"
+            "time": "2026-11-27T06:24:21+00:00"
         },
         {
             "name": "tomaj/omnipay-tatra",
@@ -2669,12 +2669,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/tomaj/omnipay-vub.git",
-                "reference": "93b059e726ed08d14704c7b0037f46ecdb64ba5a"
+                "reference": "9317f581b0ecc382cf98b7dc04134adc636c41ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tomaj/omnipay-vub/zipball/93b059e726ed08d14704c7b0037f46ecdb64ba5a",
-                "reference": "93b059e726ed08d14704c7b0037f46ecdb64ba5a",
+                "url": "https://api.github.com/repos/tomaj/omnipay-vub/zipball/9317f581b0ecc382cf98b7dc04134adc636c41ff",
+                "reference": "9317f581b0ecc382cf98b7dc04134adc636c41ff",
                 "shasum": ""
             },
             "require": {
@@ -2777,7 +2777,7 @@
                 "docs": "https://tomaj.github.io/omnipay-vub/",
                 "security": "https://github.com/tomaj/omnipay-vub/security/policy"
             },
-            "time": "2026-11-25T19:48:36+00:00"
+            "time": "2026-11-27T06:23:35+00:00"
         },
         {
             "name": "tracy/tracy",
