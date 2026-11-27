@@ -43,9 +43,9 @@
 		"nette/security": "^3.2",
 		"nette/utils": "^4.0",
 		"php-http/guzzle7-adapter": "^1.0",
-		"tomaj/omnipay-slsp": "^3.0",
+		"tomaj/omnipay-slsp": "dev-master",
 		"tomaj/omnipay-tatra": "dev-master",
-		"tomaj/omnipay-vub": "^3.0",
+		"tomaj/omnipay-vub": "dev-master",
 		"tracy/tracy": "^2.10"
 	},
 	"require-dev": {
@@ -58,6 +58,13 @@
 		"phpunit/phpunit": "^13.2",
 		"rector/rector": "^2.8"
 	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/tomaj/omnipay-vub.git",
+			"no-api": true
+		}
+	],
 	"minimum-stability": "stable",
 	"autoload": {
 		"psr-4": {
